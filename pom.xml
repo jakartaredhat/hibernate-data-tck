@@ -153,6 +153,8 @@
                             <includeArtifactIds>jakarta.data-tck</includeArtifactIds>
                             <includeClassifiers>sources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
+                            <!-- Exclude the NoSQL based test sources -->
+                            <excludes>**/nosql/**</excludes>
                             <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
                             <outputDirectory>${project.build.directory}/tck-sources</outputDirectory>
                             <overWriteSnapshots>true</overWriteSnapshots>
@@ -208,7 +210,7 @@
                     <!-- Supported tags
                         Entities:[nosql|persistence]
                         Other:   [signature] -->
-                    <groups>standalone</groups>
+                    <groups>standalone,persistence</groups>
                     <!-- If running back-to-back tests at different levels
                      use this to distinguish the results -->
                     <reportNameSuffix>standalone</reportNameSuffix>
