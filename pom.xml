@@ -174,9 +174,13 @@
                             <version>${hibernate.data.version}</version>
                         </path>
                     </annotationProcessorPaths>
+                    <parameters>true</parameters>
                     <compileSourceRoots>
                         <compileSourceRoot>${project.build.directory}/tck-sources</compileSourceRoot>
                     </compileSourceRoots>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
 
