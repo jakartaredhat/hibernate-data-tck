@@ -8,14 +8,24 @@
         <description>Hibernate Entity Manager for Jakarta Data TCK</description>
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
+        <class>ee.jakarta.tck.data.framework.read.only.AsciiCharacter</class>
+        <class>ee.jakarta.tck.data.framework.read.only.NaturalNumber</class>
+        <class>ee.jakarta.tck.data.standalone.entity.Box</class>
+        <class>ee.jakarta.tck.data.standalone.entity.Coordinate</class>
+        <class>ee.jakarta.tck.data.web.validation.Rectangle</class>
+
         <properties>
-            <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver" />
-            <property name="jakarta.persistence.jdbc.url"    value="jdbc:h2:./target/h2temp;DB_CLOSE_DELAY=-1" />
-            <property name="jakarta.persistence.jdbc.user"   value="sa" />
+            <property name="jakarta.persistence.jdbc.url"
+                      value="jdbc:h2:./target/h2temp;DB_CLOSE_DELAY=-1" />
+            <property name="jakarta.persistence.jdbc.user" value="sa" />
             <property name="jakarta.persistence.jdbc.password" value="" />
-            <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+
+            <property name="jakarta.persistence.schema-generation.database.action"
+                      value="drop-and-create"/>
+
             <property name="hibernate.show_sql"   value="true" />
             <property name="hibernate.format_sql" value="true" />
+            <property name="hibernate.highlight_sql" value="true" />
         </properties>
     </persistence-unit>
 </persistence>
