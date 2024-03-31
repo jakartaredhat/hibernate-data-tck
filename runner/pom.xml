@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hibernate</groupId>
+    <artifactId>hiberate-data-tck-runner</artifactId>
+    <version>1.0</version>
+    <name>Hibernate Jakarta Data TCK Runner</name>
+    <description>Hibernate Data :: TCK Runner</description>
+    <properties>
+        <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
+        <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
+        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+
+        <arquillian.version>1.8.0.Final</arquillian.version>
+        <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
+        <jakarta.data.tck.version>1.0.0-SNAPSHOT</jakarta.data.tck.version>
+        <junit.version>5.9.0</junit.version>
+        <cdi.version>4.1.0-M2</cdi.version>
+        <servlet.version>6.0.0-M2</servlet.version>
+        <sigtest.version>1.6</sigtest.version>
+        <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
+        <weld-junit.version>4.0.2.Final</weld-junit.version>
+        <h2.version>2.1.214</h2.version>
+    </properties>
+
+    <!-- The Junit5 test frameworks -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${arquillian.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Runtime Dependencies -->
+    <dependencies>
+        <!-- The TCK -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hiberate-data-tck-tests</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- The API -->
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-api</artifactId>
+            <version>${jakarta.data.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.nosql</groupId>
+            <artifactId>nosql-core</artifactId>
+            <version>1.0.0-b7</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- TODO add your implementation of the Jakarta Data API -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.data.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-junit5</artifactId>
+            <version>${weld-junit.version}</version>
+        </dependency>
+        <!-- Junit5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <!-- Signature Test Plugin -->
+        <dependency>
+            <groupId>org.netbeans.tools</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>${sigtest.version}</version>
+        </dependency>
+        <!-- APIs referenced by TCK that do not require implementations for standalone
+         tests -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0-M2</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.1.0.RC1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.0-M2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>${h2.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+
+            <!-- Surefire plugin - Entrypoint for Junit5 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                        <version>${junit.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <dependenciesToScan>
+                        <dependency>jakarta.data:jakarta.data-tck</dependency>
+                    </dependenciesToScan>
+                    <includes>
+                        <include>**/StandaloneEntityTests.java</include>
+                    </includes>
+                    <!-- tag::systemProperties[] -->
+                    <systemPropertyVariables>
+                        <!-- tag::signature[] -->
+                        <jakarta.tck.profile>none</jakarta.tck.profile>
+                        <jimage.dir>target/tck-classes</jimage.dir>
+                        <signature.sigTestClasspath>target/jakarta.data-api.jar</signature.sigTestClasspath>
+                        <!-- end::signature[] -->
+                        <!-- tag::logging[] -->
+                        <java.util.logging.config.file>target/test-classes/logging.properties</java.util.logging.config.file>
+                        <!-- end::logging[] -->
+                    </systemPropertyVariables>
+                    <!-- end::systemProperties[] -->
+                    <!-- Supported tags
+                        Entities:[nosql|persistence]
+                        Other:   [signature] -->
+                    <groups>standalone,persistence</groups>
+                    <!-- If running back-to-back tests at different levels
+                     use this to distinguish the results -->
+                    <reportNameSuffix>standalone</reportNameSuffix>
+                    <!-- Ensure surfire plugin looks under src/main/java
+                     instead of src/test/java -->
+                    <testSourceDirectory>${basedir}/src/main/java/</testSourceDirectory>
+                    <properties>
+                        <configurationParameters>
+                            junit.jupiter.extensions.autodetection.enabled = true
+                        </configurationParameters>
+                    </properties>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>hb-ann-proc</id>
+            <dependencies>
+                <dependency>
+                    <groupId>jakarta.data</groupId>
+                    <artifactId>jakarta.data-tck</artifactId>
+                    <classifier>sources</classifier>
+                    <version>${jakarta.data.tck.version}</version>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.13.0</version>
+                        <configuration>
+                            <release>17</release>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.hibernate.orm</groupId>
+                                    <artifactId>hibernate-jpamodelgen</artifactId>
+                                    <version>${hibernate.data.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <parameters>true</parameters>
+                            <compilerArgs>
+                                <arg>-parameters</arg>
+                            </compilerArgs>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.build.directory}/generated-test-sources</compileSourceRoot>
+                                <compileSourceRoot>src/test/java</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.6.1</version>
+                        <executions>
+                            <execution>
+                                <id>src-dependencies</id>
+                                <phase>process-test-sources</phase>
+                                <goals>
+                                    <goal>unpack-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeGroupIds>jakarta.data</includeGroupIds>
+                                    <includeArtifactIds>jakarta.data-tck</includeArtifactIds>
+                                    <includeClassifiers>sources</includeClassifiers>
+                                    <excludeTransitive>true</excludeTransitive>
+                                    <excludes>**/nosql/**,**/_AsciiChar.java,**/_AsciiCharacter.java</excludes>
+                                    <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
+                                    <outputDirectory>${project.build.directory}/generated-test-sources</outputDirectory>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+    </profiles>
+</project>

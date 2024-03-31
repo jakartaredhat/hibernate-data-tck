@@ -1,0 +1,2 @@
+org.hibernate.data.tck.standalone.HibernateStandaloneExtension
+#org.jboss.weld.junit5.WeldJunit5Extension

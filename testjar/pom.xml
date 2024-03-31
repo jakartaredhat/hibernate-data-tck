@@ -20,14 +20,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.hibernate</groupId>
-    <artifactId>hiberate-data-tck</artifactId>
+    <artifactId>hiberate-data-tck-tests</artifactId>
     <version>1.0</version>
-    <name>Hibernate Jakarta Data TCK Runner</name>
-    <description>Hibernate Data :: TCK Runner</description>
+    <name>Hibernate Jakarta Data TCK Test Jar</name>
+    <description>Hibernate Data :: TCK Test Jar</description>
     <properties>
         <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
         <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
-        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
         <arquillian.version>1.8.0.Final</arquillian.version>
         <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
@@ -36,7 +36,7 @@
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
         <sigtest.version>1.6</sigtest.version>
-        <hibernate.data.version>6.5.0-SNAPSHOT</hibernate.data.version>
+        <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
     </properties>
 
@@ -67,12 +67,18 @@
             <groupId>jakarta.data</groupId>
             <artifactId>jakarta.data-tck</artifactId>
             <version>${jakarta.data.tck.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>jakarta.data</groupId>
             <artifactId>jakarta.data-tck</artifactId>
-            <classifier>sources</classifier>
             <version>${jakarta.data.tck.version}</version>
+            <classifier>sources</classifier>
         </dependency>
         <!-- The API -->
         <dependency>
@@ -80,6 +86,7 @@
             <artifactId>jakarta.data-api</artifactId>
             <version>${jakarta.data.version}</version>
         </dependency>
+
         <dependency>
             <groupId>jakarta.nosql</groupId>
             <artifactId>nosql-core</artifactId>
@@ -133,10 +140,16 @@
             <artifactId>jakarta.enterprise.cdi-api</artifactId>
             <version>4.1.0.RC1</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.0-M2</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -144,7 +157,7 @@
                 <executions>
                     <execution>
                         <id>src-dependencies</id>
-                        <phase>process-test-sources</phase>
+                        <phase>initialize</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
                         </goals>
@@ -153,8 +166,7 @@
                             <includeArtifactIds>jakarta.data-tck</includeArtifactIds>
                             <includeClassifiers>sources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
-                            <!-- Exclude the NoSQL based test sources -->
-                            <excludes>**/nosql/**</excludes>
+                            <excludes>**/nosql/**,**/_AsciiChar.java,**/_AsciiCharacter.java</excludes>
                             <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
                             <outputDirectory>${project.build.directory}/tck-sources</outputDirectory>
                             <overWriteSnapshots>true</overWriteSnapshots>
@@ -162,63 +174,83 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
+                <executions>
+                    <execution>
+                        <id>base-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-parameters</arg>
+                            </compilerArgs>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.basedir}/src/main/java</compileSourceRoot>
+                                <compileSourceRoot>${project.build.directory}/tck-sources</compileSourceRoot>
+                                <compileSourceRoot>${project.build.directory}/generated-source/annotations</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.hibernate.orm</groupId>
+                                    <artifactId>hibernate-jpamodelgen</artifactId>
+                                    <version>${hibernate.data.version}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <compilerArgs>
+                                <arg>-parameters</arg>
+                                <arg>-proc:only</arg>
+                            </compilerArgs>
+                            <compileSourceRoots>
+                                <compileSourceRoot>${project.build.directory}/tck-sources</compileSourceRoot>
+                            </compileSourceRoots>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <compilerArgs>
+                                <arg>-parameters</arg>
+                                <arg>-proc:none</arg>
+                            </compilerArgs>
+                        </configuration>
+                    </execution>
+                </executions>
                 <configuration>
                     <release>17</release>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.hibernate.orm</groupId>
-                            <artifactId>hibernate-jpamodelgen</artifactId>
-                            <version>${hibernate.data.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                    <parameters>true</parameters>
-                    <compileSourceRoots>
-                        <compileSourceRoot>${project.build.directory}/tck-sources</compileSourceRoot>
-                    </compileSourceRoots>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
+                    <!--compileSourceRoots>
+                        <compileSourceRoot>${project.build.directory}/generated-sources/test-annotations</compileSourceRoot>
+                        <compileSourceRoot>${project.build.directory}/generated-sources</compileSourceRoot>
+                    </compileSourceRoots-->
                 </configuration>
             </plugin>
 
-            <!-- Surefire plugin - Entrypoint for Junit5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
-                    <dependenciesToScan>
-                        <dependency>jakarta.data:jakarta.data-tck</dependency>
-                    </dependenciesToScan>
-                    <!-- tag::systemProperties[] -->
-                    <systemPropertyVariables>
-                        <!-- tag::signature[] -->
-                        <jakarta.tck.profile>none</jakarta.tck.profile>
-                        <jimage.dir>target/tck-classes</jimage.dir>
-                        <signature.sigTestClasspath>target/jakarta.data-api.jar</signature.sigTestClasspath>
-                        <!-- end::signature[] -->
-                        <!-- tag::logging[] -->
-                        <java.util.logging.config.file>${logging.config}</java.util.logging.config.file>
-                        <!-- end::logging[] -->
-                    </systemPropertyVariables>
-                    <!-- end::systemProperties[] -->
-                    <!-- Supported tags
-                        Entities:[nosql|persistence]
-                        Other:   [signature] -->
-                    <groups>standalone,persistence</groups>
-                    <!-- If running back-to-back tests at different levels
-                     use this to distinguish the results -->
-                    <reportNameSuffix>standalone</reportNameSuffix>
-                    <!-- Ensure surfire plugin looks under src/main/java
-                     instead of src/test/java -->
-                    <testSourceDirectory>${basedir}/src/main/java/</testSourceDirectory>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
 </project>
