@@ -13,7 +13,10 @@ import ee.jakarta.tck.data.standalone.entity.Boxes_;
 import ee.jakarta.tck.data.standalone.entity.EntityTests;
 import jakarta.data.repository.Repository;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.spi.BeanManager;
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.inject.spi.InjectionPoint;
+import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -24,6 +27,7 @@ import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.HashMap;
 import java.util.function.Function;
 
 @ExtendWith(WeldJunit5Extension.class)
@@ -31,7 +35,12 @@ public class StandaloneEntityTests extends EntityTests {
     static class EMFAction implements Function<InjectionPoint, EntityManagerFactory> {
         @Override
         public EntityManagerFactory apply(InjectionPoint injectionPoint) {
-            return Persistence.createEntityManagerFactory("jakarta-data-tck");
+            HashMap<String, Object> properties = new HashMap<>();
+            BeanManager beanManager = CDI.current().getBeanManager();
+            System.out.println("BeanManager: " + beanManager);
+            properties.put("jakarta.persistence.bean.manager", beanManager);
+            properties.put("javax.persistence.bean.manager", beanManager);
+            return Persistence.createEntityManagerFactory("jakarta-data-tck", properties);
         }
     }
     @WeldSetup
