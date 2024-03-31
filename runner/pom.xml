@@ -183,7 +183,7 @@
                     <!-- Supported tags
                         Entities:[nosql|persistence]
                         Other:   [signature] -->
-                    <groups>standalone,persistence</groups>
+                    <groups><![CDATA[standalone & persistence]]></groups>
                     <!-- If running back-to-back tests at different levels
                      use this to distinguish the results -->
                     <reportNameSuffix>standalone</reportNameSuffix>
