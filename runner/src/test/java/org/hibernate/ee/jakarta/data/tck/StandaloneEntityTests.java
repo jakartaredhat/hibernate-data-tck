@@ -10,6 +10,7 @@ import ee.jakarta.tck.data.framework.read.only.NaturalNumbers_;
 import ee.jakarta.tck.data.framework.read.only.PositiveIntegers;
 import ee.jakarta.tck.data.framework.read.only.PositiveIntegers_;
 import ee.jakarta.tck.data.standalone.entity.Boxes_;
+import ee.jakarta.tck.data.standalone.entity.MultipleEntityRepo_;
 import ee.jakarta.tck.data.standalone.entity.EntityTests;
 import jakarta.data.repository.Repository;
 import jakarta.enterprise.context.RequestScoped;
@@ -50,6 +51,7 @@ public class StandaloneEntityTests extends EntityTests {
                     NaturalNumbers_.class,
                     PositiveIntegers_.class,
                     CustomRepository_.class,
+                    MultipleEntityRepo_.class,
                     DirectoryBuildCompatibleExtension.class)
             .activate(RequestScoped.class)
             .setPersistenceUnitFactory((Function) new EMFAction())
