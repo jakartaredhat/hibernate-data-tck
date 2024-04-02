@@ -21,7 +21,7 @@
             <property name="jakarta.persistence.jdbc.password" value="" />
 
             <property name="jakarta.persistence.schema-generation.database.action"
-                      value="create"/>
+                      value="drop-and-create"/>
 
             <property name="hibernate.allow_update_outside_transaction" value="true"/>
 
