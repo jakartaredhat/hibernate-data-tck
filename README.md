@@ -21,6 +21,10 @@ The Java SE version in use needs to be 17 or higher.
 1. git checkout kill-method-name-queries
 1. mvn install
 
+## Jakart Data Tools fork
+1. cd tools
+2. mvn install
+
 ## Build the augmented TCK test jar in this repo
 1. cd testjar
 1. mvn install
