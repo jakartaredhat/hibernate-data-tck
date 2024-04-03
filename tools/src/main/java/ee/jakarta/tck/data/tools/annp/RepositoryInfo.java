@@ -18,9 +18,15 @@ import jakarta.data.repository.Repository;
 
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.TypeElement;
+import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class RepositoryInfo {
     public static class MethodInfo {
@@ -129,15 +135,36 @@ public class RepositoryInfo {
     }
 
 
-    public void addQBNMethod(ExecutableElement m, QueryByNameInfo info) {
+    public void addQBNMethod(ExecutableElement m, QueryByNameInfo info, Types types) {
         qbnMethods.add(m);
         String query = ParseUtils.toQuery(info);
         StringBuilder orderBy = new StringBuilder();
+        DeclaredType returnType = null;
+        if(m.getReturnType() instanceof DeclaredType) {
+            returnType = (DeclaredType) m.getReturnType();
+        }
+        String returnTypeStr = returnType == null ? m.getReturnType().toString() : toString(returnType);
+        System.out.printf("addQBNMethod: %s, returnType: %s, returnTypeStr: %s\n",
+                m.getSimpleName().toString(), returnType, returnTypeStr);
+        if(m.getSimpleName().toString().equals("findById")) {
+            String rtn = returnType.toString();
+        }
         MethodInfo mi = new MethodInfo(m.getSimpleName().toString(), m.getReturnType().toString(), query, info.getOrderBy());
         for (VariableElement p : m.getParameters()) {
             mi.addParameter(p.asType().toString() + " " + p.getSimpleName());
         }
         addMethod(mi);
+    }
+    public String toString(DeclaredType tm) {
+        StringBuilder buf = new StringBuilder();
+        TypeElement returnTypeElement = (TypeElement) tm.asElement();
+        buf.append(returnTypeElement.getQualifiedName());
+        if (!tm.getTypeArguments().isEmpty()) {
+            buf.append('<');
+            buf.append(tm.getTypeArguments().toString());
+            buf.append(">");
+        }
+        return buf.toString();
     }
     public List<ExecutableElement> getQBNMethods() {
         return qbnMethods;

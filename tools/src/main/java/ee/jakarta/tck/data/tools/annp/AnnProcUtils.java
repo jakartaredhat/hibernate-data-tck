@@ -13,6 +13,11 @@ package ee.jakarta.tck.data.tools.annp;
 
 import ee.jakarta.tck.data.tools.qbyn.ParseUtils;
 import ee.jakarta.tck.data.tools.qbyn.QueryByNameInfo;
+import jakarta.data.repository.Delete;
+import jakarta.data.repository.Find;
+import jakarta.data.repository.Insert;
+import jakarta.data.repository.Save;
+import jakarta.data.repository.Update;
 import org.stringtemplate.v4.ST;
 
 import javax.annotation.processing.Filer;
@@ -56,15 +61,52 @@ public class AnnProcUtils {
             }
             """;
 
-    public static List<ExecutableElement> methodsIn(Iterable<? extends Element> elements) {
+    /**
+     *
+     * @param typeElement
+     * @return
+     */
+    public static List<ExecutableElement> methodsIn(TypeElement typeElement) {
         ArrayList<ExecutableElement> methods = new ArrayList<>();
-        for (Element e : elements) {
-            if(e.getKind() == ElementKind.METHOD) {
-                methods.add((ExecutableElement) e);
+        List<ExecutableElement> typeMethods = methodsIn(typeElement.getEnclosedElements());
+        methods.addAll(typeMethods);
+        List<? extends TypeMirror> superifaces = typeElement.getInterfaces();
+        for (TypeMirror iface : superifaces) {
+            if(iface instanceof DeclaredType) {
+                DeclaredType dt = (DeclaredType) iface;
+                System.out.printf("Processing superinterface %s<%s>\n", dt.asElement(), dt.getTypeArguments());
+                methods.addAll(methodsIn((TypeElement) dt.asElement()));
             }
         }
         return methods;
     }
+    public static List<ExecutableElement> methodsIn(Iterable<? extends Element> elements) {
+        ArrayList<ExecutableElement> methods = new ArrayList<>();
+        for (Element e : elements) {
+            if(e.getKind() == ElementKind.METHOD) {
+                ExecutableElement method = (ExecutableElement) e;
+                // Skip lifecycle methods
+                if(!isLifeCycleMethod(method)) {
+                    methods.add(method);
+                }
+            }
+        }
+        return methods;
+    }
+
+    /**
+     * Is a method annotated with a lifecycle annotation
+     * @param method a repository method
+     * @return true if the method is a lifecycle method
+     */
+    public static boolean isLifeCycleMethod(ExecutableElement method) {
+        return method.getAnnotation(Insert.class) != null
+                || method.getAnnotation(Find.class) != null
+                || method.getAnnotation(Update.class) != null
+                || method.getAnnotation(Save.class) != null
+                || method.getAnnotation(Delete.class) != null;
+    }
+
     public static String getFullyQualifiedName(Element element) {
         if (element instanceof TypeElement) {
             return ((TypeElement) element).getQualifiedName().toString();

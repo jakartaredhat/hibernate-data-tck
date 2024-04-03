@@ -12,6 +12,7 @@
 package ee.jakarta.tck.data.tools.annp;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
@@ -27,23 +28,30 @@ import java.util.Map;
 import java.util.Set;
 
 import ee.jakarta.tck.data.tools.qbyn.QueryByNameInfo;
-import jakarta.data.repository.Delete;
-import jakarta.data.repository.Insert;
 import jakarta.data.repository.Repository;
-import jakarta.data.repository.Save;
-import jakarta.data.repository.Update;
 import jakarta.persistence.Entity;
 
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
+import javax.lang.model.util.Types;
 
 
+/**
+ * Annotation processor for {@link Repository} annotations that creates sub-interfaces for repositories
+ * that use Query By Name (QBN) methods.
+ */
 @SupportedAnnotationTypes("jakarta.data.repository.Repository")
 @SupportedSourceVersion(SourceVersion.RELEASE_17)
-@SupportedOptions({"debug"})
+@SupportedOptions({"debug", "generatedSourcesDirectory"})
 public class RespositoryProcessor extends AbstractProcessor {
     private Map<String, RepositoryInfo> repoInfoMap = new HashMap<>();
+
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnv) {
+        super.init(processingEnv);
+        processingEnv.getOptions();
+    }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
@@ -60,9 +68,10 @@ public class RespositoryProcessor extends AbstractProcessor {
 
             System.out.printf("Repository(%s) as kind:%s\n", repository.asType(), repository.getKind());
             TypeElement entityType = null;
+            TypeElement repositoryType = null;
             if(repository instanceof TypeElement) {
-                TypeElement typeElement = (TypeElement) repository;
-                entityType = getEntityType(typeElement);
+                repositoryType = (TypeElement) repository;
+                entityType = getEntityType(repositoryType);
                 System.out.printf("\tRepository(%s) entityType(%s)\n", repository, entityType);
             }
             // If there
@@ -71,7 +80,7 @@ public class RespositoryProcessor extends AbstractProcessor {
                 continue;
             }
             //
-            newRepos |= checkRespositoryForQBN(repository, entityType);
+            newRepos |= checkRespositoryForQBN(repositoryType, entityType, processingEnv.getTypeUtils());
         }
 
         // Generate repository interfaces for QBN methods
@@ -109,7 +118,7 @@ public class RespositoryProcessor extends AbstractProcessor {
         for (Element e : repo.getEnclosedElements()) {
             if (e instanceof ExecutableElement) {
                 ExecutableElement ee = (ExecutableElement) e;
-                if (isLifeCycleMethod(ee)) {
+                if (AnnProcUtils.isLifeCycleMethod(ee)) {
                     List<? extends VariableElement> params = ee.getParameters();
                     for (VariableElement parameter : params) {
                         // Get the type of the parameter
@@ -146,26 +155,28 @@ public class RespositoryProcessor extends AbstractProcessor {
         return null;
     }
 
-    private boolean isLifeCycleMethod(ExecutableElement method) {
-        return method.getAnnotation(Insert.class) != null
-                || method.getAnnotation(Update.class) != null
-                || method.getAnnotation(Save.class) != null
-                || method.getAnnotation(Delete.class) != null;
-    }
-    private boolean checkRespositoryForQBN(Element repository, TypeElement entityType) {
+
+    /**
+     * Check a repository for Query By Name methods, and create a {@link RepositoryInfo} object if found.
+     * @param repository a repository element
+     * @param entityType the entity type for the repository
+     * @return true if the repository has QBN methods
+     */
+    private boolean checkRespositoryForQBN(TypeElement repository, TypeElement entityType, Types types) {
         System.out.println("RespositoryProcessor: Checking repository for Query By Name");
         boolean addedRepo = false;
 
         String entityName = entityType.getQualifiedName().toString();
-        List<ExecutableElement> methods = AnnProcUtils.methodsIn(repository.getEnclosedElements());
+        List<ExecutableElement> methods = AnnProcUtils.methodsIn(repository);
         RepositoryInfo repoInfo = new RepositoryInfo(repository);
         for (ExecutableElement m : methods) {
             System.out.printf("\t%s\n", m.getSimpleName());
             QueryByNameInfo qbn = AnnProcUtils.isQBN(m);
             if(qbn != null) {
                 qbn.setEntity(entityName);
-                repoInfo.addQBNMethod(m, qbn);
+                repoInfo.addQBNMethod(m, qbn, types);
             }
+
         }
         if(repoInfo.hasQBNMethods()) {
             System.out.printf("Repository(%s) has QBN(%d) methods\n", repository, repoInfo.qbnMethods.size());
