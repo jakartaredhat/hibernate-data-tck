@@ -18,6 +18,7 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
@@ -99,6 +100,9 @@ public class RespositoryProcessor extends AbstractProcessor {
     }
 
     private TypeElement getEntityType(TypeElement repo) {
+        if(repo.getQualifiedName().toString().equals("ee.jakarta.tck.data.common.cdi.Directory")) {
+            System.out.println("Directory");
+        }
         // Check super interfaces for Repository<EntityType>
         for (TypeMirror iface : repo.getInterfaces()) {
             System.out.printf("\tRepository(%s) interface(%s)\n", repo, iface);
@@ -110,6 +114,18 @@ public class RespositoryProcessor extends AbstractProcessor {
                     if (entity != null) {
                         System.out.printf("Repository(%s) entityType(%s)\n", repo, candidateType);
                         return candidateType;
+                    } else {
+                        // Look for custom Entity types based on '*Entity' naming convention
+                        // A qualifier annotation would be better, see https://github.com/jakartaee/data/issues/638
+                        List<? extends AnnotationMirror> x = candidateType.getAnnotationMirrors();
+                        for (AnnotationMirror am : x) {
+                            DeclaredType dt = am.getAnnotationType();
+                            String annotationName = dt.asElement().getSimpleName().toString();
+                            if(annotationName.endsWith("Entity")) {
+                                System.out.printf("Repository(%s) entityType(%s) from custom annotation:(%s)\n", repo, candidateType, annotationName);
+                                return candidateType;
+                            }
+                        }
                     }
                 }
             }
