@@ -150,7 +150,7 @@ public class ParseUtils {
         }
         //
         if(info.getPredicates().isEmpty()) {
-            return sb.toString();
+            return sb.toString().trim();
         }
 
         sb.append("where ");
@@ -264,6 +264,6 @@ public class ParseUtils {
             sb.append(" order by '' limit ").append(limit);
         }
 
-        return sb.toString();
+        return sb.toString().trim();
     }
 }

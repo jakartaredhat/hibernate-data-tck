@@ -124,14 +124,34 @@ public class AnnProcUtils {
             try {
                 info = ParseUtils.parseQueryByName(methodName);
             } catch (Throwable e) {
-                System.out.printf("Failed to parse %s: %s\n", methodName, e.getMessage());
-                // TODO, need to handle simple xxxBy methods that don't follow parse grammar
-                return null;
+                // Retry as simple xxxBy name
+                info = reparseAsSimpleQuery(m);
+                if(info == null) {
+                    System.out.printf("Failed to parse %s: %s\n", methodName, e.getMessage());
+                    return null;
+                }
             }
             return info;
         }
 
         return null;
+    }
+
+    private static QueryByNameInfo reparseAsSimpleQuery(ExecutableElement m) {
+        QueryByNameInfo info = new QueryByNameInfo();
+        String methodName = m.getSimpleName().toString();
+        if (methodName.equals("countBy")) {
+                info.setAction(QueryByNameInfo.Action.COUNT);
+        } else if (methodName.equals("existsBy")) {
+            info.setAction(QueryByNameInfo.Action.EXISTS);
+        } else if (methodName.equals("deleteBy")) {
+            info.setAction(QueryByNameInfo.Action.DELETE);
+        } else if (methodName.equals("updateBy")) {
+            info.setAction(QueryByNameInfo.Action.UPDATE);
+        } else {
+            info = null;
+        }
+        return info;
     }
 
     public static void writeRepositoryInterface(RepositoryInfo repo, ProcessingEnvironment processingEnv) throws IOException {

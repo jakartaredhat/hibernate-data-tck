@@ -466,4 +466,22 @@ public class QBNParserTest {
         Assertions.assertEquals("where numericValue >= ?1 and right(hexadecimal, length(?2)) = ?2 order by '' limit 3", query);
         Assertions.assertEquals(0, info.getOrderBy().size());
     }
+
+    @Test
+    public void test_countByByHand() {
+        QueryByNameInfo info = new QueryByNameInfo();
+        info.setAction(QueryByNameInfo.Action.COUNT);
+        String query = ParseUtils.toQuery(info);
+        System.out.println(query);
+        Assertions.assertEquals("select count(this)", query);
+    }
+
+    @Test
+    public void testExistsBy() {
+        QueryByNameInfo info = new QueryByNameInfo();
+        info.setAction(QueryByNameInfo.Action.EXISTS);
+        String query = ParseUtils.toQuery(info);
+        System.out.println(query);
+        Assertions.assertEquals("select count(this)>0", query);
+    }
 }
