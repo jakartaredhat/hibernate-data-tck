@@ -449,4 +449,21 @@ public class QBNParserTest {
         Assertions.assertEquals(0, info.getOrderBy().size());
     }
 
+    @Test
+    public void test_findFirstNameByIdInOrderByAgeDesc() {
+        QueryByNameInfo info = ParseUtils.parseQueryByName("findFirstNameByIdInOrderByAgeDesc");
+        String query = ParseUtils.toQuery(info);
+        System.out.println(query);
+        Assertions.assertEquals("where id in ?1 order by '' limit 1", query);
+        Assertions.assertEquals(1, info.getOrderBy().size());
+    }
+
+    @Test
+    public void test_findFirst3ByNumericValueGreaterThanEqualAndHexadecimalEndsWith() {
+        QueryByNameInfo info = ParseUtils.parseQueryByName("findFirst3ByNumericValueGreaterThanEqualAndHexadecimalEndsWith");
+        String query = ParseUtils.toQuery(info);
+        System.out.println(query);
+        Assertions.assertEquals("where numericValue >= ?1 and right(hexadecimal, length(?2)) = ?2 order by '' limit 3", query);
+        Assertions.assertEquals(0, info.getOrderBy().size());
+    }
 }

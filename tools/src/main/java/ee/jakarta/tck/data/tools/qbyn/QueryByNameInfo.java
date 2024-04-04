@@ -94,7 +94,7 @@ public class QueryByNameInfo {
     private Action action = Action.NONE;
     private List<Condition> predicates = new ArrayList<>();
     private List<OrderBy> orderBy = new ArrayList<>();
-    // &gt;= 0 means find expression exists
+    // > 0 means find expression exists
     int findExpressionCount = -1;
     String ignoredText;
     // The entity name

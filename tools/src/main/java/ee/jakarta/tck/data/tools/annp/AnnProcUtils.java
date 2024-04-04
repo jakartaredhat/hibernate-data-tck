@@ -118,12 +118,14 @@ public class AnnProcUtils {
     public static QueryByNameInfo isQBN(ExecutableElement m) {
         QueryByNameInfo info = null;
         String methodName = m.getSimpleName().toString();
-        if(methodName.startsWith("findBy") || methodName.startsWith("deleteBy") || methodName.startsWith("updateBy")
-                || methodName.startsWith("countBy") || methodName.startsWith("existsBy") ) {
+        if(methodName.startsWith("findBy") || methodName.startsWith("findFirst") || methodName.startsWith("deleteBy")
+                || methodName.startsWith("updateBy")  || methodName.startsWith("countBy")
+                || methodName.startsWith("existsBy") ) {
             try {
                 info = ParseUtils.parseQueryByName(methodName);
             } catch (Throwable e) {
                 System.out.printf("Failed to parse %s: %s\n", methodName, e.getMessage());
+                // TODO, need to handle simple xxxBy methods that don't follow parse grammar
                 return null;
             }
             return info;

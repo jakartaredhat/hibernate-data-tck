@@ -75,8 +75,6 @@ public class ParseUtils {
             @Override
             public void exitSubject(ee.jakarta.tck.data.tools.antlr.QBNParser.SubjectContext ctx) {
                 if(ctx.find() != null) {
-                    System.out.println("find: " + ctx.find().getText());
-                    System.out.println("find_expression.INTEGER: " + ctx.find_expression().INTEGER());
                     int findCount = 0;
                     if(ctx.find_expression().INTEGER() != null) {
                         findCount = Integer.parseInt(ctx.find_expression().INTEGER().getText());
@@ -250,6 +248,7 @@ public class ParseUtils {
         }
 
         // If there is an orderBy clause, add it to query
+        int limit = info.getFindExpressionCount() == 0 ? 1 : info.getFindExpressionCount();
         if(includeOrderBy && !info.getOrderBy().isEmpty()) {
             for (QueryByNameInfo.OrderBy ob : info.getOrderBy()) {
                 sb.append(" order by ").append(ob.property).append(' ');
@@ -257,6 +256,12 @@ public class ParseUtils {
                     sb.append(ob.direction.name().toLowerCase());
                 }
             }
+            // We pass the find expression count as the limit
+            if(limit > 0) {
+                sb.append(" limit ").append(limit);
+            }
+        } else if(limit > 0) {
+            sb.append(" order by '' limit ").append(limit);
         }
 
         return sb.toString();
