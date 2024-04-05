@@ -190,10 +190,10 @@ public class QueryByNameInfo {
         if(ignoredText != null && !ignoredText.isEmpty()) {
             sb.append(ignoredText);
         }
-        sb.append("By");
         // Predicates
         boolean first = true;
         if(!predicates.isEmpty()) {
+            sb.append("By");
             for(Condition c : predicates) {
                 // Add the join condition
                 if(!first) {

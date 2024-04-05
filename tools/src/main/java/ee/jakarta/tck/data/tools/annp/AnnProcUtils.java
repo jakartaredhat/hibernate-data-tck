@@ -29,12 +29,8 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.ExecutableType;
-import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
-import javax.lang.model.type.TypeVariable;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
@@ -104,42 +100,14 @@ public class AnnProcUtils {
 
 
     public static QueryByNameInfo isQBN(ExecutableElement m) {
-        QueryByNameInfo info = null;
         String methodName = m.getSimpleName().toString();
-        if(methodName.startsWith("findBy") || methodName.startsWith("findFirst") || methodName.startsWith("deleteBy")
-                || methodName.startsWith("updateBy")  || methodName.startsWith("countBy")
-                || methodName.startsWith("existsBy") ) {
-            try {
-                info = ParseUtils.parseQueryByName(methodName);
-            } catch (Throwable e) {
-                // Retry as simple xxxBy name
-                info = reparseAsSimpleQuery(m);
-                if(info == null) {
-                    System.out.printf("Failed to parse %s: %s\n", methodName, e.getMessage());
-                    return null;
-                }
-            }
-            return info;
+        try {
+            return ParseUtils.parseQueryByName(methodName);
         }
-
-        return null;
-    }
-
-    private static QueryByNameInfo reparseAsSimpleQuery(ExecutableElement m) {
-        QueryByNameInfo info = new QueryByNameInfo();
-        String methodName = m.getSimpleName().toString();
-        if (methodName.equals("countBy")) {
-                info.setAction(QueryByNameInfo.Action.COUNT);
-        } else if (methodName.equals("existsBy")) {
-            info.setAction(QueryByNameInfo.Action.EXISTS);
-        } else if (methodName.equals("deleteBy")) {
-            info.setAction(QueryByNameInfo.Action.DELETE);
-        } else if (methodName.equals("updateBy")) {
-            info.setAction(QueryByNameInfo.Action.UPDATE);
-        } else {
-            info = null;
+        catch (Throwable e) {
+            System.out.printf("Failed to parse %s: %s\n", methodName, e.getMessage());
+            return null;
         }
-        return info;
     }
 
     /**

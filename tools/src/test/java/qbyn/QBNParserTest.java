@@ -82,8 +82,6 @@ public class QBNParserTest {
             QBNParser parser = new QBNParser(tokens);
             QueryByNameInfo info = new QueryByNameInfo();
             parser.addParseListener(new QBNBaseListener() {
-                private StringBuffer property = new StringBuffer();
-
                 @Override
                 public void exitPredicate(QBNParser.PredicateContext ctx) {
                     int count = ctx.condition().size();
@@ -107,25 +105,32 @@ public class QBNParserTest {
                 }
 
                 @Override
-                public void exitSubject(QBNParser.SubjectContext ctx) {
-                    if(ctx.find() != null) {
-                        System.out.println("find: " + ctx.find().getText());
-                        System.out.println("find_expression.INTEGER: " + ctx.find_expression().INTEGER());
+                public void exitFind_query(QBNParser.Find_queryContext ctx) {
+                    System.out.println("find: " + ctx.find().getText());
+                    if(ctx.limit() != null) {
+                        System.out.println("find_expression.INTEGER: " + ctx.limit().INTEGER());
                         int findCount = 0;
-                        if(ctx.find_expression().INTEGER() != null) {
-                            findCount = Integer.parseInt(ctx.find_expression().INTEGER().getText());
+                        if(ctx.limit().INTEGER() != null) {
+                            findCount = Integer.parseInt(ctx.limit().INTEGER().getText());
                         }
                         info.setFindExpressionCount(findCount);
-                    } else {
-                        QueryByNameInfo.Action action = QueryByNameInfo.Action.valueOf(ctx.action().getText().toUpperCase());
-                        info.setAction(action);
+                        if(ctx.ignored_text() != null) {
+                            info.setIgnoredText(ctx.ignored_text().getText());
+                        }
                     }
+                }
+
+                @Override
+                public void exitAction_query(QBNParser.Action_queryContext ctx) {
+                    QueryByNameInfo.Action action = QueryByNameInfo.Action.valueOf(ctx.action().getText().toUpperCase());
+                    info.setAction(action);
                     if(ctx.ignored_text() != null) {
                         info.setIgnoredText(ctx.ignored_text().getText());
                     }
                 }
+
                 @Override
-                public void exitOrder_clause(QBNParser.Order_clauseContext ctx) {
+                public void exitOrder(QBNParser.OrderContext ctx) {
                     int count = ctx.order_item().size();
                     if(ctx.property() != null) {
                         String property = ctx.property().getText();
@@ -451,7 +456,7 @@ public class QBNParserTest {
 
     @Test
     public void test_findFirstNameByIdInOrderByAgeDesc() {
-        QueryByNameInfo info = ParseUtils.parseQueryByName("findFirstNameByIdInOrderByAgeDesc");
+        QueryByNameInfo info = ParseUtils.parseQueryByName("findFirstXxxxxByIdInOrderByAgeDesc");
         String query = ParseUtils.toQuery(info);
         System.out.println(query);
         Assertions.assertEquals("where id in ?1 order by '' limit 1", query);
