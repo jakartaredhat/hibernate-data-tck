@@ -19,10 +19,8 @@ import jakarta.data.repository.Repository;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.TypeParameterElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 import java.util.ArrayList;
 import java.util.List;
@@ -135,10 +133,15 @@ public class RepositoryInfo {
     }
 
 
+    /**
+     * Add a Query By Name method to the repository
+     * @param m - the method
+     * @param info - parsed QBN info
+     * @param types - annotation processing types utility
+     */
     public void addQBNMethod(ExecutableElement m, QueryByNameInfo info, Types types) {
         qbnMethods.add(m);
-        String query = ParseUtils.toQuery(info);
-        StringBuilder orderBy = new StringBuilder();
+        // Deal with generics
         DeclaredType returnType = null;
         if(m.getReturnType() instanceof DeclaredType) {
             returnType = (DeclaredType) m.getReturnType();
@@ -146,10 +149,20 @@ public class RepositoryInfo {
         String returnTypeStr = returnType == null ? m.getReturnType().toString() : toString(returnType);
         System.out.printf("addQBNMethod: %s, returnType: %s, returnTypeStr: %s\n",
                 m.getSimpleName().toString(), returnType, returnTypeStr);
-        if(m.getSimpleName().toString().equals("findById")) {
-            String rtn = returnType.toString();
+        ParseUtils.ToQueryOptions options = ParseUtils.ToQueryOptions.NONE;
+        String methodName = m.getSimpleName().toString();
+        // Select the appropriate cast option if this is a countBy method
+        if(methodName.startsWith("countBy")) {
+            options = switch (returnTypeStr) {
+                case "long" -> ParseUtils.ToQueryOptions.CAST_LONG_TO_INTEGER;
+                case "int" -> ParseUtils.ToQueryOptions.CAST_COUNT_TO_INTEGER;
+                default -> ParseUtils.ToQueryOptions.NONE;
+            };
         }
-        MethodInfo mi = new MethodInfo(m.getSimpleName().toString(), m.getReturnType().toString(), query, info.getOrderBy());
+        // Build the query string
+        String query = ParseUtils.toQuery(info, options);
+
+        MethodInfo mi = new MethodInfo(methodName, m.getReturnType().toString(), query, info.getOrderBy());
         for (VariableElement p : m.getParameters()) {
             mi.addParameter(p.asType().toString() + " " + p.getSimpleName());
         }

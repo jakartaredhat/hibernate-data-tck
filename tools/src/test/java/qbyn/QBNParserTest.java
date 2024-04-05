@@ -207,7 +207,7 @@ public class QBNParserTest {
     @Test
     public void test_findByNumTypeInOrderByIdAsc() {
         QueryByNameInfo info = ParseUtils.parseQueryByName("findByNumTypeInOrderByIdAsc");
-        String query = ParseUtils.toQuery(info, true);
+        String query = ParseUtils.toQuery(info, ParseUtils.ToQueryOptions.INCLUDE_ORDER_BY);
         System.out.println(query);
         Assertions.assertEquals("where numType in ?1 order by id asc", query);
         Assertions.assertEquals(1, info.getOrderBy().size());
@@ -295,7 +295,7 @@ public class QBNParserTest {
     @Test
     public void test_findByHexadecimalStartsWithAndIsControlOrderByIdAsc() {
         QueryByNameInfo info = ParseUtils.parseQueryByName("findByHexadecimalStartsWithAndIsControlOrderByIdAsc");
-        String query = ParseUtils.toQuery(info, true);
+        String query = ParseUtils.toQuery(info, ParseUtils.ToQueryOptions.INCLUDE_ORDER_BY);
         System.out.println(query);
         Assertions.assertEquals("where left(hexadecimal, length(?1)) = ?1 and isControl = ?2 order by id asc", query);
         Assertions.assertEquals(1, info.getOrderBy().size());
@@ -474,6 +474,30 @@ public class QBNParserTest {
         String query = ParseUtils.toQuery(info);
         System.out.println(query);
         Assertions.assertEquals("select count(this)", query);
+    }
+
+    /**
+     * Test the countBy method with an int return type is cast to an integer
+     */
+    @Test
+    public void test_countByByHandIntReturn() {
+        QueryByNameInfo info = new QueryByNameInfo();
+        info.setAction(QueryByNameInfo.Action.COUNT);
+        String query = ParseUtils.toQuery(info, ParseUtils.ToQueryOptions.CAST_COUNT_TO_INTEGER);
+        System.out.println(query);
+        Assertions.assertEquals("select cast(count(this) as Integer)", query);
+    }
+
+    /**
+     * Test the countBy method with a long return type is cast to an integer
+     */
+    @Test
+    public void test_countByByHandLongReturn() {
+        QueryByNameInfo info = new QueryByNameInfo();
+        info.setAction(QueryByNameInfo.Action.COUNT);
+        String query = ParseUtils.toQuery(info, ParseUtils.ToQueryOptions.CAST_LONG_TO_INTEGER);
+        System.out.println(query);
+        Assertions.assertEquals("select count(this) as Integer", query);
     }
 
     @Test
