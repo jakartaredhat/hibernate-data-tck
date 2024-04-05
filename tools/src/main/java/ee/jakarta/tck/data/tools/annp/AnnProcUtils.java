@@ -16,6 +16,7 @@ import ee.jakarta.tck.data.tools.qbyn.QueryByNameInfo;
 import jakarta.data.repository.Delete;
 import jakarta.data.repository.Find;
 import jakarta.data.repository.Insert;
+import jakarta.data.repository.Query;
 import jakarta.data.repository.Save;
 import jakarta.data.repository.Update;
 import org.stringtemplate.v4.ST;
@@ -95,7 +96,7 @@ public class AnnProcUtils {
     }
 
     /**
-     * Is a method annotated with a lifecycle annotation
+     * Is a method annotated with a lifecycle or Query annotation
      * @param method a repository method
      * @return true if the method is a lifecycle method
      */
@@ -104,7 +105,8 @@ public class AnnProcUtils {
                 || method.getAnnotation(Find.class) != null
                 || method.getAnnotation(Update.class) != null
                 || method.getAnnotation(Save.class) != null
-                || method.getAnnotation(Delete.class) != null;
+                || method.getAnnotation(Delete.class) != null
+                || method.getAnnotation(Query.class) != null;
     }
 
     public static String getFullyQualifiedName(Element element) {
