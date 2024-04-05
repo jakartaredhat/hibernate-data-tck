@@ -60,28 +60,31 @@ public class RespositoryProcessor extends AbstractProcessor {
         boolean newRepos = false;
         Set<? extends Element> repositories = roundEnv.getElementsAnnotatedWith(Repository.class);
         for (Element repository : repositories) {
-            String fqn = AnnProcUtils.getFullyQualifiedName(repository);
-            System.out.printf("Processing repository %s\n", fqn);
-            if(repoInfoMap.containsKey(fqn) || repoInfoMap.containsKey(fqn.substring(0, fqn.length()-1))) {
-                System.out.printf("Repository(%s) already processed\n", fqn);
-                continue;
-            }
+            String provider = repository.getAnnotation(Repository.class).provider();
+            if(provider.isEmpty() || provider.equalsIgnoreCase("hibernate")) {
+                String fqn = AnnProcUtils.getFullyQualifiedName(repository);
+                System.out.printf("Processing repository %s\n", fqn);
+                if(repoInfoMap.containsKey(fqn) || repoInfoMap.containsKey(fqn.substring(0, fqn.length()-1))) {
+                    System.out.printf("Repository(%s) already processed\n", fqn);
+                    continue;
+                }
 
-            System.out.printf("Repository(%s) as kind:%s\n", repository.asType(), repository.getKind());
-            TypeElement entityType = null;
-            TypeElement repositoryType = null;
-            if(repository instanceof TypeElement) {
-                repositoryType = (TypeElement) repository;
-                entityType = getEntityType(repositoryType);
-                System.out.printf("\tRepository(%s) entityType(%s)\n", repository, entityType);
+                System.out.printf("Repository(%s) as kind:%s\n", repository.asType(), repository.getKind());
+                TypeElement entityType = null;
+                TypeElement repositoryType = null;
+                if(repository instanceof TypeElement) {
+                    repositoryType = (TypeElement) repository;
+                    entityType = getEntityType(repositoryType);
+                    System.out.printf("\tRepository(%s) entityType(%s)\n", repository, entityType);
+                }
+                // If there
+                if(entityType == null) {
+                    System.out.printf("Repository(%s) does not have an JPA entity type\n", repository);
+                    continue;
+                }
+                //
+                newRepos |= checkRespositoryForQBN(repositoryType, entityType, processingEnv.getTypeUtils());
             }
-            // If there
-            if(entityType == null) {
-                System.out.printf("Repository(%s) does not have an JPA entity type\n", repository);
-                continue;
-            }
-            //
-            newRepos |= checkRespositoryForQBN(repositoryType, entityType, processingEnv.getTypeUtils());
         }
 
         // Generate repository interfaces for QBN methods
