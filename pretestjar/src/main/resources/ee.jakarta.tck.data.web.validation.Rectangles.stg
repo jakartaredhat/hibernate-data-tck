@@ -1,0 +1,21 @@
+// Override template fo ree.jakarta.tck.data.web.validation.Rectangles due to TCK challenge:
+// https://github.com/jakartaee/data/issues/657
+delimiters "#", "#"
+tckOverrides() ::= <<
+    @Override
+    @Delete
+    public void deleteAllBy();
+
+    @Size(min = 0, max = 3)
+    @Find
+    @OrderBy(value = "id")
+    List<Rectangle> findAllByOrderByIdAsc();
+>>
+
+tckImports() ::= <<
+import java.util.List;
+import jakarta.data.repository.Delete;
+import jakarta.data.repository.Find;
+import jakarta.data.repository.OrderBy;
+import jakarta.validation.constraints.Size;
+>>

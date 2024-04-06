@@ -20,6 +20,8 @@ import jakarta.data.repository.Query;
 import jakarta.data.repository.Save;
 import jakarta.data.repository.Update;
 import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 import javax.annotation.processing.Filer;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -36,31 +38,15 @@ import javax.lang.model.type.TypeVariable;
 import javax.tools.JavaFileObject;
 import java.io.IOException;
 import java.io.Writer;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AnnProcUtils {
-    static String REPO_TEMPLATE = """
-            package #repo.pkg#;
-            import jakarta.annotation.Generated;
-            import jakarta.data.repository.OrderBy;
-            import jakarta.data.repository.Query;
-            import jakarta.data.repository.Repository;
-            import #repo.fqn#;
-
-            @Repository(dataStore = "#repo.dataStore#")
-            @Generated("ee.jakarta.tck.data.tools.annp.RespositoryProcessor")
-            public interface #repo.name#$ extends #repo.name# {
-                #repo.methods :{m |
-                    @Override
-                    @Query("#m.query#")
-                    #m.orderBy :{o | @OrderBy(value="#o.property#", descending = #o.descending#)}#
-                    public #m.returnType# #m.name# (#m.parameters: {p | #p#}; separator=", "#);
-                    
-                    }
-            	#
-            }
-            """;
+    // The name of the template for the TCK override imports
+    public static final String TCK_IMPORTS = "/tckImports";
+    // The name of the template for the TCK overrides
+    public static final String TCK_OVERRIDES = "/tckOverrides";
 
     /**
      *
@@ -156,10 +142,36 @@ public class AnnProcUtils {
         return info;
     }
 
+    /**
+     * Write a repository interface to a source file using the {@linkplain RepositoryInfo}. This uses the
+     * RepoTemplate.stg template file to generate the source code. It also looks for a
+     *
+     * @param repo - parsed repository info
+     * @param processingEnv - the processing environment
+     * @throws IOException - if the file cannot be written
+     */
     public static void writeRepositoryInterface(RepositoryInfo repo, ProcessingEnvironment processingEnv) throws IOException {
-        ST st = new ST(REPO_TEMPLATE, '#', '#');
-        st.add("repo", repo);
-        String ifaceSrc = st.render();
+        STGroup repoGroup = new STGroupFile("RepoTemplate.stg");
+        ST genRepo = repoGroup.getInstanceOf("genRepo");
+        try {
+            URL stgURL = AnnProcUtils.class.getResource("/"+repo.getFqn()+".stg");
+            STGroup tckGroup = new STGroupFile(stgURL);
+            long count = tckGroup.getTemplateNames().stream().filter(t -> t.equals(TCK_IMPORTS) | t.equals(TCK_OVERRIDES)).count();
+            if(count != 2) {
+                System.out.printf("No TCK overrides for %s\n", repo.getFqn());
+            } else {
+                tckGroup.importTemplates(repoGroup);
+                System.out.printf("Found TCK overrides(%s) for %s\n", tckGroup.getRootDirURL(), repo.getFqn());
+                System.out.printf("tckGroup: %s\n", tckGroup.show());
+                genRepo = tckGroup.getInstanceOf("genRepo");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.printf("No TCK overrides for %s\n", repo.getFqn());
+        }
+
+        genRepo.add("repo", repo);
+
+        String ifaceSrc = genRepo.render();
         String ifaceName = repo.getFqn() + "$";
         Filer filer = processingEnv.getFiler();
         JavaFileObject srcFile = filer.createSourceFile(ifaceName, repo.getRepositoryElement());
