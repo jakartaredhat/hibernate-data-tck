@@ -167,7 +167,7 @@
                             <includeArtifactIds>jakarta.data-tck,hibernate-data-tck-gen</includeArtifactIds>
                             <includeClassifiers>sources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
-                            <excludes>**/nosql/**,**/_AsciiChar.java,**/_AsciiCharacter.java</excludes>
+                            <excludes>**/_AsciiChar.java,**/_AsciiCharacter.java</excludes>
                             <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
                             <outputDirectory>${project.build.directory}/tck-sources</outputDirectory>
                             <overWriteSnapshots>true</overWriteSnapshots>
