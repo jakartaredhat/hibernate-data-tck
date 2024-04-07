@@ -27,7 +27,7 @@
     <properties>
         <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
         <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
-        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+        <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
         <arquillian.version>1.8.0.Final</arquillian.version>
         <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
@@ -100,6 +100,10 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
         <!-- Signature Test Plugin -->
         <dependency>
             <groupId>org.netbeans.tools</groupId>
@@ -154,20 +158,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>${junit.version}</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
-                    <dependenciesToScan>
-                        <dependency>jakarta.data:jakarta.data-tck</dependency>
-                    </dependenciesToScan>
-                    <includes>
-                        <include>**/StandaloneEntityTests.java</include>
-                    </includes>
                     <!-- tag::systemProperties[] -->
                     <systemPropertyVariables>
                         <!-- tag::signature[] -->
@@ -187,9 +178,6 @@
                     <!-- If running back-to-back tests at different levels
                      use this to distinguish the results -->
                     <reportNameSuffix>standalone</reportNameSuffix>
-                    <!-- Ensure surfire plugin looks under src/main/java
-                     instead of src/test/java -->
-                    <testSourceDirectory>${basedir}/src/main/java/</testSourceDirectory>
                     <properties>
                         <configurationParameters>
                             junit.jupiter.extensions.autodetection.enabled = true
@@ -200,69 +188,4 @@
         </plugins>
     </build>
 
-    <profiles>
-        <profile>
-            <id>hb-ann-proc</id>
-            <dependencies>
-                <dependency>
-                    <groupId>jakarta.data</groupId>
-                    <artifactId>jakarta.data-tck</artifactId>
-                    <classifier>sources</classifier>
-                    <version>${jakarta.data.tck.version}</version>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.13.0</version>
-                        <configuration>
-                            <release>17</release>
-                            <annotationProcessorPaths>
-                                <path>
-                                    <groupId>org.hibernate.orm</groupId>
-                                    <artifactId>hibernate-jpamodelgen</artifactId>
-                                    <version>${hibernate.data.version}</version>
-                                </path>
-                            </annotationProcessorPaths>
-                            <parameters>true</parameters>
-                            <compilerArgs>
-                                <arg>-parameters</arg>
-                            </compilerArgs>
-                            <compileSourceRoots>
-                                <compileSourceRoot>${project.build.directory}/generated-test-sources</compileSourceRoot>
-                                <compileSourceRoot>src/test/java</compileSourceRoot>
-                            </compileSourceRoots>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.6.1</version>
-                        <executions>
-                            <execution>
-                                <id>src-dependencies</id>
-                                <phase>process-test-sources</phase>
-                                <goals>
-                                    <goal>unpack-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includeGroupIds>jakarta.data</includeGroupIds>
-                                    <includeArtifactIds>jakarta.data-tck</includeArtifactIds>
-                                    <includeClassifiers>sources</includeClassifiers>
-                                    <excludeTransitive>true</excludeTransitive>
-                                    <excludes>**/nosql/**,**/_AsciiChar.java,**/_AsciiCharacter.java</excludes>
-                                    <failOnMissingClassifierArtifact>true</failOnMissingClassifierArtifact>
-                                    <outputDirectory>${project.build.directory}/generated-test-sources</outputDirectory>
-                                    <overWriteSnapshots>true</overWriteSnapshots>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-
-        </profile>
-    </profiles>
 </project>
