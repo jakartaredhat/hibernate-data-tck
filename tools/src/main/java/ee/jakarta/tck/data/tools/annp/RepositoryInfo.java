@@ -152,7 +152,7 @@ public class RepositoryInfo {
         ParseUtils.ToQueryOptions options = ParseUtils.ToQueryOptions.NONE;
         String methodName = m.getSimpleName().toString();
         // Select the appropriate cast option if this is a countBy method
-        if(methodName.startsWith("countBy")) {
+        if(methodName.startsWith("count")) {
             options = switch (returnTypeStr) {
                 case "long" -> ParseUtils.ToQueryOptions.CAST_LONG_TO_INTEGER;
                 case "int" -> ParseUtils.ToQueryOptions.CAST_COUNT_TO_INTEGER;

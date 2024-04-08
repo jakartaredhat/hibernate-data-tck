@@ -88,23 +88,30 @@ public class ParseUtils {
             }
 
             @Override
-            public void exitSubject(ee.jakarta.tck.data.tools.antlr.QBNParser.SubjectContext ctx) {
-                if(ctx.find() != null) {
+            public void exitAction_query(QBNParser.Action_queryContext ctx) {
+                QueryByNameInfo.Action action = QueryByNameInfo.Action.valueOf(ctx.action().getText().toUpperCase());
+                info.setAction(action);
+                if(ctx.ignored_text() != null) {
+                    info.setIgnoredText(ctx.ignored_text().getText());
+                }
+            }
+
+            @Override
+            public void exitFind_query(QBNParser.Find_queryContext ctx) {
+                if (ctx.limit() != null) {
                     int findCount = 0;
-                    if(ctx.find_expression().INTEGER() != null) {
-                        findCount = Integer.parseInt(ctx.find_expression().INTEGER().getText());
+                    if (ctx.limit().INTEGER() != null) {
+                        findCount = Integer.parseInt(ctx.limit().INTEGER().getText());
                     }
                     info.setFindExpressionCount(findCount);
-                } else {
-                    QueryByNameInfo.Action action = QueryByNameInfo.Action.valueOf(ctx.action().getText().toUpperCase());
-                    info.setAction(action);
                 }
                 if(ctx.ignored_text() != null) {
                     info.setIgnoredText(ctx.ignored_text().getText());
                 }
             }
+
             @Override
-            public void exitOrder_clause(ee.jakarta.tck.data.tools.antlr.QBNParser.Order_clauseContext ctx) {
+            public void exitOrder(ee.jakarta.tck.data.tools.antlr.QBNParser.OrderContext ctx) {
                 int count = ctx.order_item().size();
                 if(ctx.property() != null) {
                     String property = camelCase(ctx.property().getText());
