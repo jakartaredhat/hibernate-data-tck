@@ -31,7 +31,6 @@
 
     <modules>
         <module>tools</module>
-        <module>pretestjar</module>
         <module>testjar</module>
         <module>runner</module>
     </modules>
