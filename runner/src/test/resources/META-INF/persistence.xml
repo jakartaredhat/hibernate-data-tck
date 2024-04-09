@@ -24,6 +24,7 @@
                       value="drop-and-create"/>
 
             <property name="hibernate.allow_update_outside_transaction" value="true"/>
+            <property name="hibernate.connection.autocommit" value="true"/>
 
             <property name="hibernate.show_sql"   value="true" />
             <property name="hibernate.format_sql" value="true" />

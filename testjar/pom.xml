@@ -20,24 +20,24 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.hibernate</groupId>
-    <artifactId>hiberate-data-tck-tests</artifactId>
+    <artifactId>hibernate-data-tck-tests</artifactId>
     <version>1.0</version>
     <name>Hibernate Jakarta Data TCK Test Jar</name>
-    <description>Hibernate Data :: TCK Test Jar</description>
     <properties>
         <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
         <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
+        <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
         <arquillian.version>1.8.0.Final</arquillian.version>
         <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
         <jakarta.data.tck.version>1.0.0-SNAPSHOT</jakarta.data.tck.version>
+        <jakarta.transaction.version>2.0.1</jakarta.transaction.version>
         <junit.version>5.9.0</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
         <sigtest.version>1.6</sigtest.version>
         <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
-        <weld-junit.version>4.0.2.Final</weld-junit.version>
     </properties>
 
     <!-- The Junit5 test frameworks -->
@@ -67,17 +67,17 @@
             <groupId>jakarta.data</groupId>
             <artifactId>jakarta.data-tck</artifactId>
             <version>${jakarta.data.tck.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>jakarta.data</groupId>
             <artifactId>jakarta.data-tck</artifactId>
             <version>${jakarta.data.tck.version}</version>
-            <classifier>sources</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-data-tck-gen</artifactId>
-            <version>1.0</version>
             <classifier>sources</classifier>
         </dependency>
         <!-- The API -->
@@ -93,23 +93,8 @@
             <version>1.0.0-b7</version>
             <scope>provided</scope>
         </dependency>
-        <!-- TODO add your implementation of the Jakarta Data API -->
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.data.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.orm</groupId>
-            <artifactId>hibernate-jpamodelgen</artifactId>
-            <version>${hibernate.data.version}</version>
-        </dependency>
 
-        <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-junit5</artifactId>
-            <version>${weld-junit.version}</version>
-        </dependency>
+
         <!-- Junit5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -146,6 +131,28 @@
             <artifactId>jakarta.validation-api</artifactId>
             <version>3.1.0-M2</version>
         </dependency>
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <version>${jakarta.transaction.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-tools</artifactId>
+            <version>${jakarta.data.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>${hibernate.data.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -163,8 +170,8 @@
                             <goal>unpack-dependencies</goal>
                         </goals>
                         <configuration>
-                            <includeGroupIds>jakarta.data,org.hibernate</includeGroupIds>
-                            <includeArtifactIds>jakarta.data-tck,hibernate-data-tck-gen</includeArtifactIds>
+                            <includeGroupIds>jakarta.data</includeGroupIds>
+                            <includeArtifactIds>jakarta.data-tck</includeArtifactIds>
                             <includeClassifiers>sources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                             <excludes>**/_AsciiChar.java,**/_AsciiCharacter.java</excludes>
@@ -179,29 +186,35 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.13.0</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                        <arg>-XprintRounds</arg>
+                    </compilerArgs>
+                    <compileSourceRoots>
+                        <compileSourceRoot>${project.basedir}/src/main/java</compileSourceRoot>
+                        <compileSourceRoot>${project.build.directory}/tck-sources</compileSourceRoot>
+                        <compileSourceRoot>${project.build.directory}/generated-source/annotations</compileSourceRoot>
+                    </compileSourceRoots>
+                    <generatedSourcesDirectory>${project.build.directory}/tck-tool-sources</generatedSourcesDirectory>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>base-compile</id>
-                        <phase>compile</phase>
+                        <id>attach-sources</id>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>jar</goal>
                         </goals>
-                        <configuration>
-                            <compilerArgs>
-                                <arg>-parameters</arg>
-                                <arg>-XprintRounds</arg>
-                            </compilerArgs>
-                            <compileSourceRoots>
-                                <compileSourceRoot>${project.basedir}/src/main/java</compileSourceRoot>
-                                <compileSourceRoot>${project.build.directory}/tck-sources</compileSourceRoot>
-                            </compileSourceRoots>
-                            <release>17</release>
-                        </configuration>
                     </execution>
                 </executions>
-
+                <configuration>
+                    <excludeResources>true</excludeResources>
+                </configuration>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
