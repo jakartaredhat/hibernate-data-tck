@@ -16,6 +16,9 @@ import org.jboss.weld.junit5.WeldJunit5Extension;
 import org.jboss.weld.junit5.WeldSetup;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+/**
+ * Configure the {@link EntityTests} to run in a CDI environment using Weld
+ */
 @ExtendWith(WeldJunit5Extension.class)
 public class StandaloneEntityTests extends EntityTests {
     @Inject

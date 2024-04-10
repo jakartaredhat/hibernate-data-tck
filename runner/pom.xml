@@ -35,7 +35,7 @@
         <junit.version>5.9.0</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
-        <sigtest.version>1.6</sigtest.version>
+        <sigtest.version>2.2</sigtest.version>
         <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
         <h2.version>2.1.214</h2.version>
@@ -66,7 +66,7 @@
         <!-- The TCK -->
         <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hiberate-data-tck-tests</artifactId>
+            <artifactId>hibernate-data-tck-tests</artifactId>
             <version>1.0</version>
             <scope>test</scope>
         </dependency>
@@ -100,9 +100,9 @@
         </dependency>
         <!-- Signature Test Plugin -->
         <dependency>
-            <groupId>org.netbeans.tools</groupId>
+            <groupId>jakarta.tck</groupId>
             <artifactId>sigtest-maven-plugin</artifactId>
-            <version>${sigtest.version}</version>
+            <version>2.2</version>
         </dependency>
         <!-- APIs referenced by TCK that do not require implementations for standalone
          tests -->
@@ -156,7 +156,34 @@
                     <release>17</release>
                 </configuration>
             </plugin>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>jakarta.data</groupId>
+                            <artifactId>jakarta.data-api</artifactId>
+                            <version>${jakarta.data.version}</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>target</outputDirectory>
+                            <destFileName>jakarta.data-api.jar</destFileName>
+                        </artifactItem>
+                    </artifactItems>
+                    <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
+            </plugin>
             <!-- Surefire plugin - Entrypoint for Junit5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -168,7 +195,7 @@
                         <!-- tag::signature[] -->
                         <jakarta.tck.profile>none</jakarta.tck.profile>
                         <jimage.dir>target/tck-classes</jimage.dir>
-                        <signature.sigTestClasspath>target/jakarta.data-api.jar</signature.sigTestClasspath>
+                        <signature.sigTestClasspath>${project.build.directory}/jakarta.data-api.jar</signature.sigTestClasspath>
                         <!-- end::signature[] -->
                         <!-- tag::logging[] -->
                         <java.util.logging.config.file>target/test-classes/logging.properties</java.util.logging.config.file>

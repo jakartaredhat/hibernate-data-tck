@@ -36,7 +36,6 @@
         <junit.version>5.9.0</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
-        <sigtest.version>1.6</sigtest.version>
         <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
     </properties>
 
@@ -100,12 +99,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
-        <!-- Signature Test Plugin -->
-        <dependency>
-            <groupId>org.netbeans.tools</groupId>
-            <artifactId>sigtest-maven-plugin</artifactId>
-            <version>${sigtest.version}</version>
-        </dependency>
         <!-- APIs referenced by TCK that do not require implementations for standalone
          tests -->
         <dependency>
@@ -156,6 +149,20 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/tck-sources</directory>
+                <includes>
+                    <include>ee/jakarta/tck/data/framework/signature/jakarta.data.sig_17</include>
+                    <include>ee/jakarta/tck/data/framework/signature/jakarta.data.sig_21</include>
+                    <include>ee/jakarta/tck/data/framework/signature/sig-test.map</include>
+                    <include>ee/jakarta/tck/data/framework/signature/sig-test-pkg-list.txt</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
 
             <plugin>
