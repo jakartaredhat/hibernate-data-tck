@@ -36,7 +36,7 @@ public class StandaloneEntityTests extends EntityTests {
                     DirectoryBuildCompatibleExtension.class)
             .activate(RequestScoped.class)
             .inject(this)
-            .setPersistenceUnitFactory((ip) -> appEMF)
+            .setPersistenceUnitFactory(ip -> appEMF)
             .build()
             ;
 

@@ -13,6 +13,7 @@
         <class>ee.jakarta.tck.data.standalone.entity.Box</class>
         <class>ee.jakarta.tck.data.standalone.entity.Coordinate</class>
         <class>ee.jakarta.tck.data.web.validation.Rectangle</class>
+        <class>ee.jakarta.tck.data.standalone.persistence.Product</class>
 
         <properties>
             <property name="jakarta.persistence.jdbc.url"
