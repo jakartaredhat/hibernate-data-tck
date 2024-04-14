@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2022,2023 Contributors to the Eclipse Foundation
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  ~
+  ~ SPDX-License-Identifier: Apache-2.0
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.hibernate</groupId>
+    <artifactId>hiberate-data-tck-web-runner</artifactId>
+    <version>1.0</version>
+    <name>Hibernate Jakarta Data TCK Web Runner</name>
+    <properties>
+        <maven.dep.plugin.version>3.3.0</maven.dep.plugin.version>
+        <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
+        <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
+
+        <arquillian.version>1.8.0.Final</arquillian.version>
+        <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
+        <jakarta.data.tck.version>1.0.0-SNAPSHOT</jakarta.data.tck.version>
+        <junit.version>5.9.0</junit.version>
+        <cdi.version>4.1.0-M2</cdi.version>
+        <servlet.version>6.0.0-M2</servlet.version>
+        <sigtest.version>2.2</sigtest.version>
+        <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
+        <weld-junit.version>4.0.2.Final</weld-junit.version>
+        <h2.version>2.1.214</h2.version>
+        <wildfly.version>24.0.0.Beta3</wildfly.version>
+        <wildfly.arquillian.version>5.1.0.Beta1</wildfly.arquillian.version>
+        <wildfly.maven.plugin.version>5.0.0.Beta5</wildfly.maven.plugin.version>
+        <jboss.home>${project.build.directory}/wildfly</jboss.home>
+    </properties>
+
+    <!-- The Junit5 test frameworks -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>${junit.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian</groupId>
+                <artifactId>arquillian-bom</artifactId>
+                <version>${arquillian.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- Runtime Dependencies -->
+    <dependencies>
+        <!-- The TCK -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-data-tck-tests</artifactId>
+            <version>1.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- The API -->
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-api</artifactId>
+            <version>${jakarta.data.version}</version>
+        </dependency>
+        <!-- TODO add your implementation of the Jakarta Data API -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.data.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-junit5</artifactId>
+            <version>${weld-junit.version}</version>
+        </dependency>
+        <!-- Junit5 -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <!-- Signature Test Plugin -->
+        <dependency>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <!-- APIs referenced by TCK that do not require implementations for standalone
+         tests -->
+        <dependency>
+            <groupId>org.jboss.shrinkwrap</groupId>
+            <artifactId>shrinkwrap-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.junit5</groupId>
+            <artifactId>arquillian-junit5-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0-M2</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <version>4.1.0.RC1</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.1.0-M2</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>jboss-logging</artifactId>
+            <version>3.5.3.Final</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.core</groupId>
+            <artifactId>wildfly-protocol</artifactId>
+            <version>${wildfly.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.wildfly.arquillian</groupId>
+            <artifactId>wildfly-arquillian-container-managed</artifactId>
+            <version>${wildfly.arquillian.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.arquillian.protocol</groupId>
+            <artifactId>arquillian-protocol-rest-jakarta</artifactId>
+            <version>${arquillian.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
+                <configuration>
+                    <release>17</release>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>copy</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <artifactItems>
+                        <artifactItem>
+                            <groupId>jakarta.data</groupId>
+                            <artifactId>jakarta.data-api</artifactId>
+                            <version>${jakarta.data.version}</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>target</outputDirectory>
+                            <destFileName>jakarta.data-api.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>jakarta.data</groupId>
+                            <artifactId>jakarta.data-api</artifactId>
+                            <version>${jakarta.data.version}</version>
+                            <type>jar</type>
+                            <overWrite>false</overWrite>
+                            <outputDirectory>target/wildfly/modules/system/layers/base/jakarta/data/api/main</outputDirectory>
+                            <destFileName>jakarta.data-api-1.0.0.jar</destFileName>
+                        </artifactItem>
+                        <artifactItem>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-core</artifactId>
+                            <version>${hibernate.data.version}</version>
+                            <type>jar</type>
+                            <overWrite>true</overWrite>
+                            <outputDirectory>target/wildfly/modules/system/layers/base/org/hibernate/main</outputDirectory>
+                            <destFileName>hibernate-core-6.6.0.jar</destFileName>
+                        </artifactItem>
+                    </artifactItems>
+                    <overWriteSnapshots>true</overWriteSnapshots>
+                </configuration>
+            </plugin>
+            <!-- Surefire plugin - Entrypoint for Junit5 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+                <configuration>
+                    <forkCount>0</forkCount>
+                    <dependenciesToScan>
+                        <dependency>org.hibernate:hibernate-data-tck-tests</dependency>
+                    </dependenciesToScan>
+                    <!-- Works around WFCORE-4211 -->
+                    <argLine>${modular.jdk.args}</argLine>
+                    <groups><![CDATA[core&web]]></groups>
+                    <!-- If running back-to-back tests at different levels
+                     use this to distinguish the results -->
+                    <reportNameSuffix>core</reportNameSuffix>
+                    <systemPropertyVariables>
+                        <jakarta.tck.profile>core</jakarta.tck.profile>
+                        <jimage.dir>target/tck-classes</jimage.dir>
+                        <signature.sigTestClasspath>${project.build.directory}/jakarta.data-api.jar</signature.sigTestClasspath>
+                        <java.util.logging.config.file>target/test-classes/logging.properties</java.util.logging.config.file>
+                        <maven.repo.local>${settings.localRepository}</maven.repo.local>
+                        <jboss.home>${jboss.home}</jboss.home>
+                        <arquillian.launch>wildfly-core-profile</arquillian.launch>
+                        <!-- Specifiy any garbage collection related args here -->
+
+                        <!-- This property propagates to the javaVmArguments in arquillian.xml -->
+                        <additional.vm.args>
+                        </additional.vm.args>
+                    </systemPropertyVariables>
+                    <environmentVariables>
+                        <JBOSS_HOME>${jboss.home}</JBOSS_HOME>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Install wildfly to target/wildfly -->
+        <profile>
+            <id>install-wildfly</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <version>${wildfly.maven.plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>install-wildfly</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>provision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <provisioningDir>${jboss.home}</provisioningDir>
+                            <version>${wildfly.version}</version>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.0.2</version>
+                        <executions>
+                            <execution>
+                                <id>copy-hibernate-module</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/wildfly/modules/system/layers/base/org/hibernate/main</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/test/resources/hibernate/main</directory>
+                                            <includes>
+                                                <include>module.xml</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-data-module</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/wildfly/modules/system/layers/base/jakarta/data/api/main</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/test/resources/data/api/main</directory>
+                                            <includes>
+                                                <include>module.xml</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
