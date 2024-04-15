@@ -21,7 +21,7 @@
         <module name="com.fasterxml.jackson.core.jackson-core" optional="true"/>
         <module name="com.fasterxml.jackson.core.jackson-databind" optional="true"/>
         <module name="jakarta.annotation.api"/>
-        <module name="jakarta.data.api"/>
+        <module name="jakarta.data.api" export="true"/>
         <module name="jakarta.enterprise.api"/>
         <module name="jakarta.persistence.api"/>
         <module name="jakarta.transaction.api"/>

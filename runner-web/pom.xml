@@ -38,7 +38,7 @@
         <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
         <h2.version>2.1.214</h2.version>
-        <wildfly.version>24.0.0.Beta3</wildfly.version>
+        <wildfly.version>32.0.0.Beta1</wildfly.version>
         <wildfly.arquillian.version>5.1.0.Beta1</wildfly.arquillian.version>
         <wildfly.maven.plugin.version>5.0.0.Beta5</wildfly.maven.plugin.version>
         <jboss.home>${project.build.directory}/wildfly</jboss.home>
@@ -137,12 +137,6 @@
             <groupId>org.jboss.logging</groupId>
             <artifactId>jboss-logging</artifactId>
             <version>3.5.3.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wildfly.core</groupId>
-            <artifactId>wildfly-protocol</artifactId>
-            <version>${wildfly.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.wildfly.arquillian</groupId>
@@ -264,7 +258,7 @@
                         <executions>
                             <execution>
                                 <id>install-wildfly</id>
-                                <phase>process-sources</phase>
+                                <phase>initialize</phase>
                                 <goals>
                                     <goal>provision</goal>
                                 </goals>
@@ -276,8 +270,9 @@
                         </configuration>
                     </plugin>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.0.2</version>
+                        <version>3.3.1</version>
                         <executions>
                             <execution>
                                 <id>copy-hibernate-module</id>
@@ -289,12 +284,13 @@
                                     <outputDirectory>${basedir}/target/wildfly/modules/system/layers/base/org/hibernate/main</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>src/test/resources/hibernate/main</directory>
+                                            <directory>src/test/resources/org/hibernate/main</directory>
                                             <includes>
                                                 <include>module.xml</include>
                                             </includes>
                                         </resource>
                                     </resources>
+                                    <overwrite>true</overwrite>
                                 </configuration>
                             </execution>
                             <execution>
@@ -313,6 +309,26 @@
                                             </includes>
                                         </resource>
                                     </resources>
+                                    <overwrite>true</overwrite>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-jpa-module</id>
+                                <phase>process-sources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/target/wildfly/modules/system/layers/base/org/jboss/as/jpa/main</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/test/resources/org/jboss/as/jpa/main</directory>
+                                            <includes>
+                                                <include>module.xml</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                    <overwrite>true</overwrite>
                                 </configuration>
                             </execution>
                         </executions>

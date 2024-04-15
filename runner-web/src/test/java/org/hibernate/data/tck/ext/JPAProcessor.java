@@ -5,6 +5,7 @@ import org.jboss.arquillian.test.spi.TestClass;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.ArchivePath;
 import org.jboss.shrinkwrap.api.Node;
+import org.jboss.shrinkwrap.api.asset.EmptyAsset;
 import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 
@@ -49,6 +50,7 @@ public class JPAProcessor implements ApplicationArchiveProcessor {
     public void process(Archive<?> archive, TestClass testClass) {
         WebArchive webArchive = (WebArchive) archive;
         webArchive.addAsWebInfResource(new StringAsset(PERSISTENCE_XML), "persistence.xml");
+        webArchive.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
         for(Map.Entry<ArchivePath, Node> e : webArchive.getContent().entrySet()) {
             String path = e.getKey().get();
             if(path.endsWith(".class")) {
