@@ -16,9 +16,8 @@ The Java SE version in use needs to be 17 or higher.
 1. ./gradlew :hibernate-core:publishToMavenLocal :hibernate-jpamodelgen:publishToMavenLocal
 
 ### Jakarta Data API and TCK 1.0.0-SNAPSHOT
-1. git clone https://github.com/gavinking/data
+1. git clone https://github.com/jakartaee/data.git
 1. cd data
-1. git checkout kill-method-name-queries
 1. mvn install
 
 ## Jakart Data Tools fork
