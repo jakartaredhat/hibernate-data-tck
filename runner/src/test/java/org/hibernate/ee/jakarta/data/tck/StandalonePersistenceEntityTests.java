@@ -1,6 +1,5 @@
 package org.hibernate.ee.jakarta.data.tck;
 
-import ee.jakarta.tck.data.core.cdi.provider.DirectoryBuildCompatibleExtension;
 import ee.jakarta.tck.data.standalone.persistence.Catalog_;
 import ee.jakarta.tck.data.standalone.persistence.PersistenceEntityTests;
 import jakarta.enterprise.context.RequestScoped;
@@ -19,8 +18,7 @@ public class StandalonePersistenceEntityTests extends PersistenceEntityTests {
     @WeldSetup
     public WeldInitiator weld = WeldInitiator.from(PersistenceEntityTests.class,
                     Catalog_.class,
-                    EntityManagerFactoryProducer.class,
-                    DirectoryBuildCompatibleExtension.class)
+                    EntityManagerFactoryProducer.class)
             .activate(RequestScoped.class)
             .inject(this)
             .setPersistenceUnitFactory(ip -> appEMF)
