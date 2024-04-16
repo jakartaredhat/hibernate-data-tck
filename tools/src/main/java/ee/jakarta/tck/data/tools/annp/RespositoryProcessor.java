@@ -201,6 +201,8 @@ public class RespositoryProcessor extends AbstractProcessor {
             System.out.printf("Repository(%s) has QBN(%d) methods\n", repository, repoInfo.qbnMethods.size());
             repoInfoMap.put(AnnProcUtils.getFullyQualifiedName(repository), repoInfo);
             addedRepo = true;
+        } else {
+            System.out.printf("Repository(%s) has NO QBN methods\n", repository);
         }
         return addedRepo;
     }
