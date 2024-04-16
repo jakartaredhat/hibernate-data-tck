@@ -1,6 +1,5 @@
 package org.hibernate.ee.jakarta.data.tck;
 
-import ee.jakarta.tck.data.core.cdi.provider.DirectoryBuildCompatibleExtension;
 import ee.jakarta.tck.data.framework.read.only.AsciiCharacters_;
 import ee.jakarta.tck.data.framework.read.only.CustomRepository_;
 import ee.jakarta.tck.data.framework.read.only.NaturalNumbers_;
@@ -32,8 +31,7 @@ public class StandaloneEntityTests extends EntityTests {
                     PositiveIntegers_.class,
                     CustomRepository_.class,
                     MultipleEntityRepo_.class,
-                    EntityManagerFactoryProducer.class,
-                    DirectoryBuildCompatibleExtension.class)
+                    EntityManagerFactoryProducer.class)
             .activate(RequestScoped.class)
             .inject(this)
             .setPersistenceUnitFactory(ip -> appEMF)
