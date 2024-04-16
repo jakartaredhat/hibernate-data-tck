@@ -50,20 +50,22 @@ public class JPAProcessor implements ApplicationArchiveProcessor {
 
     @Override
     public void process(Archive<?> archive, TestClass testClass) {
-        WebArchive webArchive = (WebArchive) archive;
-        webArchive.addAsWebInfResource(new StringAsset(PERSISTENCE_XML), "classes/META-INF/persistence.xml");
-        webArchive.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
-        for(Map.Entry<ArchivePath, Node> e : webArchive.getContent().entrySet()) {
-            String path = e.getKey().get();
-            if(path.endsWith(".class")) {
-                // Look for X_.class
-                String className = path.substring("/WEB-INF/classes/".length(), path.length() - ".class".length())
-                        .replace('/', '.');
-                try {
-                    webArchive.addClass(className + "_");
-                    System.out.printf("Added %s_\n", className);
-                } catch (IllegalArgumentException ex){
-                    // Ignore
+        if(archive instanceof WebArchive) {
+            WebArchive webArchive = (WebArchive) archive;
+            webArchive.addAsWebInfResource(new StringAsset(PERSISTENCE_XML), "classes/META-INF/persistence.xml");
+            webArchive.addAsWebInfResource(EmptyAsset.INSTANCE, "beans.xml");
+            for (Map.Entry<ArchivePath, Node> e : webArchive.getContent().entrySet()) {
+                String path = e.getKey().get();
+                if (path.endsWith(".class")) {
+                    // Look for X_.class
+                    String className = path.substring("/WEB-INF/classes/".length(), path.length() - ".class".length())
+                            .replace('/', '.');
+                    try {
+                        webArchive.addClass(className + "_");
+                        System.out.printf("Added %s_\n", className);
+                    } catch (IllegalArgumentException ex) {
+                        // Ignore
+                    }
                 }
             }
         }

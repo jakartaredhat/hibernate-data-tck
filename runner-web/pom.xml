@@ -213,25 +213,24 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.surefire.plugin.version}</version>
                 <configuration>
-                    <forkCount>0</forkCount>
+                    <forkCount>1</forkCount>
                     <dependenciesToScan>
                         <dependency>org.hibernate:hibernate-data-tck-tests</dependency>
                     </dependenciesToScan>
                     <!-- Works around WFCORE-4211 -->
                     <argLine>${modular.jdk.args}</argLine>
-                    <groups><![CDATA[core&web]]></groups>
+                    <groups>persistence</groups>
                     <!-- If running back-to-back tests at different levels
                      use this to distinguish the results -->
                     <reportNameSuffix>core</reportNameSuffix>
                     <systemPropertyVariables>
+                        <jimage.dir>target/jimage</jimage.dir>
                         <jakarta.tck.profile>core</jakarta.tck.profile>
-                        <jimage.dir>target/tck-classes</jimage.dir>
                         <signature.sigTestClasspath>${project.build.directory}/jakarta.data-api.jar</signature.sigTestClasspath>
                         <java.util.logging.config.file>target/test-classes/logging.properties</java.util.logging.config.file>
                         <maven.repo.local>${settings.localRepository}</maven.repo.local>
                         <jboss.home>${jboss.home}</jboss.home>
                         <arquillian.launch>wildfly-core-profile</arquillian.launch>
-                        <!-- Specifiy any garbage collection related args here -->
 
                         <!-- This property propagates to the javaVmArguments in arquillian.xml -->
                         <additional.vm.args>
