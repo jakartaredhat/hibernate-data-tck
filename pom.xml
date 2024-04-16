@@ -33,6 +33,7 @@
         <module>tools</module>
         <module>testjar</module>
         <module>runner</module>
+        <module>runner-web</module>
     </modules>
 
 </project>

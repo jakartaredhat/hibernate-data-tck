@@ -36,6 +36,7 @@
         <servlet.version>6.0.0-M2</servlet.version>
         <sigtest.version>2.2</sigtest.version>
         <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
+        <weld.version>5.1.2.Final</weld.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
         <h2.version>2.1.214</h2.version>
         <wildfly.version>32.0.0.Beta1</wildfly.version>
@@ -91,6 +92,11 @@
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-junit5</artifactId>
             <version>${weld-junit.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-lite-extension-translator</artifactId>
+            <version>${weld.version}</version>
         </dependency>
         <!-- Junit5 -->
         <dependency>
@@ -219,7 +225,7 @@
                     </dependenciesToScan>
                     <!-- Works around WFCORE-4211 -->
                     <argLine>${modular.jdk.args}</argLine>
-                    <groups>persistence</groups>
+                    <groups>core,persistence</groups>
                     <!-- If running back-to-back tests at different levels
                      use this to distinguish the results -->
                     <reportNameSuffix>core</reportNameSuffix>
