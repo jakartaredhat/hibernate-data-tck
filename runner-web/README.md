@@ -8,7 +8,7 @@ There is a install-wildfly profile that will configure a local target/wildfly in
 jakarta.data.api and org.jboss.as.jpa modules. To use it, run:
 
 ```shell
-mvn -Pinstall-wildfly process-resources
+mvn -Pinstall-wildfly process-sources
 ```
 
 ## Run the ValidationTests
