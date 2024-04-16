@@ -225,7 +225,7 @@
                     </dependenciesToScan>
                     <!-- Works around WFCORE-4211 -->
                     <argLine>${modular.jdk.args}</argLine>
-                    <groups>core,persistence</groups>
+                    <groups><![CDATA[core & persistence]]></groups>
                     <!-- If running back-to-back tests at different levels
                      use this to distinguish the results -->
                     <reportNameSuffix>core</reportNameSuffix>
