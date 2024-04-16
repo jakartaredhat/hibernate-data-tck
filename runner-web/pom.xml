@@ -34,7 +34,7 @@
         <junit.version>5.9.0</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
-        <sigtest.version>2.2</sigtest.version>
+        <sigtest.version>2.3</sigtest.version>
         <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
         <weld.version>5.1.2.Final</weld.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
