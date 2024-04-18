@@ -12,7 +12,8 @@ import org.jboss.shrinkwrap.api.spec.WebArchive;
 import java.util.Map;
 
 /**
- * Creates and adds a persistence.xml file to the deployment archive.
+ * Creates and adds a persistence.xml for HibernatePersistenceProvider, an emtpy beans.xml, and the annotation processor
+ * generated classes to the deployment archive.
  */
 public class JPAProcessor implements ApplicationArchiveProcessor {
     static final String PERSISTENCE_XML = """
@@ -41,7 +42,6 @@ public class JPAProcessor implements ApplicationArchiveProcessor {
                         <property name="hibernate.show_sql"   value="true" />
                         <property name="hibernate.format_sql" value="true" />
                         <property name="hibernate.highlight_sql" value="true" />
-                        <property name="hibernate.jpa.compliance.strict" value="false" />
                         <property name="hibernate.jpa.compliance.query" value="false"/>
                     </properties>
                 </persistence-unit>
@@ -50,6 +50,7 @@ public class JPAProcessor implements ApplicationArchiveProcessor {
 
     @Override
     public void process(Archive<?> archive, TestClass testClass) {
+        System.out.printf("Processing archive %s, test=%s\n", archive.getName(), testClass.getName());
         if(archive instanceof WebArchive) {
             WebArchive webArchive = (WebArchive) archive;
             webArchive.addAsWebInfResource(new StringAsset(PERSISTENCE_XML), "classes/META-INF/persistence.xml");

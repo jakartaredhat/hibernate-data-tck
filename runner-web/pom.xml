@@ -31,7 +31,7 @@
         <arquillian.version>1.8.0.Final</arquillian.version>
         <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
         <jakarta.data.tck.version>1.0.0-SNAPSHOT</jakarta.data.tck.version>
-        <junit.version>5.9.0</junit.version>
+        <junit.version>5.10.2</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
         <sigtest.version>2.3</sigtest.version>
@@ -223,9 +223,7 @@
                     <dependenciesToScan>
                         <dependency>org.hibernate:hibernate-data-tck-tests</dependency>
                     </dependenciesToScan>
-                    <!-- Works around WFCORE-4211 -->
-                    <argLine>${modular.jdk.args}</argLine>
-                    <groups><![CDATA[core & persistence]]></groups>
+                    <groups><![CDATA[web & persistence]]></groups>
                     <!-- If running back-to-back tests at different levels
                      use this to distinguish the results -->
                     <reportNameSuffix>core</reportNameSuffix>

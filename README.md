@@ -28,6 +28,11 @@ The Java SE version in use needs to be 17 or higher.
 1. cd testjar
 1. mvn install
 
-## Running the TCK
+## Running the Standalone TCK
 1. cd runner
-1. mvn test -Dtest=org.hibernate.ee.jakarta.data.tck.StandaloneEntityTests#ensureNaturalNumberPrepopulation
+1. mvn test
+
+## Runninig the TCK in WildFly
+1. cd runner-web
+2. mvn -Pinstall-wildfly process-sources
+3. mvn test

@@ -45,9 +45,9 @@ public class AnnProcUtils {
     public static final String TCK_OVERRIDES = "/tckOverrides";
 
     /**
-     *
-     * @param typeElement
-     * @return
+     * Get a list of non-lifecycle methods in a type element. This will also process superinterfaces
+     * @param typeElement a repository interface
+     * @return a list of non-lifecycle methods as candidate repository methods
      */
     public static List<ExecutableElement> methodsIn(TypeElement typeElement) {
         ArrayList<ExecutableElement> methods = new ArrayList<>();
@@ -63,6 +63,12 @@ public class AnnProcUtils {
         }
         return methods;
     }
+
+    /**
+     * Get a list of non-lifecycle methods in a list of repository elements
+     * @param elements - a list of repository elements
+     * @return possibly empty list of non-lifecycle methods
+     */
     public static List<ExecutableElement> methodsIn(Iterable<? extends Element> elements) {
         ArrayList<ExecutableElement> methods = new ArrayList<>();
         for (Element e : elements) {
@@ -83,12 +89,13 @@ public class AnnProcUtils {
      * @return true if the method is a lifecycle method
      */
     public static boolean isLifeCycleMethod(ExecutableElement method) {
-        return method.getAnnotation(Insert.class) != null
+        boolean standardLifecycle = method.getAnnotation(Insert.class) != null
                 || method.getAnnotation(Find.class) != null
                 || method.getAnnotation(Update.class) != null
                 || method.getAnnotation(Save.class) != null
                 || method.getAnnotation(Delete.class) != null
                 || method.getAnnotation(Query.class) != null;
+        return standardLifecycle;
     }
 
     public static String getFullyQualifiedName(Element element) {
@@ -106,8 +113,8 @@ public class AnnProcUtils {
         }
         catch (Throwable e) {
             System.out.printf("Failed to parse %s: %s\n", methodName, e.getMessage());
-            return null;
         }
+        return null;
     }
 
     /**
