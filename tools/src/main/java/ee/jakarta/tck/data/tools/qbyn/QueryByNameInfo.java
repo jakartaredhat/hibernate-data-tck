@@ -97,15 +97,28 @@ public class QueryByNameInfo {
     // > 0 means find expression exists
     int findExpressionCount = -1;
     String ignoredText;
-    // The entity name
+    // The entity FQN name
     String entity;
 
+    /**
+     * The entity FQN
+     * @return entity FQN
+     */
     public String getEntity() {
         return entity;
     }
 
     public void setEntity(String entity) {
         this.entity = entity;
+    }
+
+    public String getSimpleName() {
+        String simpleName = entity;
+        int lastDot = entity.lastIndexOf('.');
+        if(lastDot >= 0) {
+            simpleName = entity.substring(lastDot + 1);
+        }
+        return simpleName;
     }
 
     public Action getAction() {

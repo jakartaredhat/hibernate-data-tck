@@ -390,6 +390,19 @@ public class QBNParserTest {
         Assertions.assertEquals(0, info.getOrderBy().size());
 
     }
+    /** Should produce
+     @Query("delete Product where productNum like ?1")
+     */
+    @Test
+    public void test_deleteByProductNumLikeNoFQN() {
+        QueryByNameInfo info = ParseUtils.parseQueryByName("deleteByProductNumLike");
+        info.setEntity("com.example.Product");
+        String query = ParseUtils.toQuery(info);
+        System.out.println(query);
+        Assertions.assertEquals("delete Product where productNum like ?1", query);
+        Assertions.assertEquals(0, info.getOrderBy().size());
+
+    }
 
     /** Should produce
      @Query("select count(this)>0 where thisCharacter = ?1")
