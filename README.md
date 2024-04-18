@@ -32,7 +32,7 @@ The Java SE version in use needs to be 17 or higher.
 1. cd runner
 1. mvn test
 
-## Runninig the TCK in WildFly
+## Running the TCK in WildFly
 1. cd runner-web
-2. mvn -Pinstall-wildfly process-sources
+2. mvn -Pinstall-wildfly clean process-sources
 3. mvn test
