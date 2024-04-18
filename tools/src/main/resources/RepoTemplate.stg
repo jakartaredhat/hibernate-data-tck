@@ -15,7 +15,7 @@ import #repo.fqn#;
 
 @Repository(dataStore = "#repo.dataStore#")
 @Generated("ee.jakarta.tck.data.tools.annp.RespositoryProcessor")
-public interface #repo.name#$ extends #repo.name# {
+interface #repo.name#$ extends #repo.name# {
     #repo.methods :{m |
         @Override
         @Query("#m.query#")

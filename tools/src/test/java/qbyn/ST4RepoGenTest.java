@@ -89,7 +89,7 @@ public class ST4RepoGenTest {
         genRepo.add("repo", repo);
         String classSrc = genRepo.render();
         System.out.println(classSrc);
-        Assertions.assertTrue(classSrc.contains("public interface BookRepository$"));
+        Assertions.assertTrue(classSrc.contains("interface BookRepository$"));
         Assertions.assertTrue(classSrc.contains("// TODO; Implement TCK overrides"));
     }
 
@@ -103,7 +103,7 @@ public class ST4RepoGenTest {
         genRepo.add("repo", repo);
         String classSrc = genRepo.render();
         System.out.println(classSrc);
-        Assertions.assertTrue(classSrc.contains("public interface BookRepository$"));
+        Assertions.assertTrue(classSrc.contains("interface BookRepository$"));
         Assertions.assertTrue(!classSrc.contains("// TODO; Implement TCK overrides"));
         Assertions.assertTrue(classSrc.contains("void deleteAllBy();"));
         Assertions.assertTrue(classSrc.contains("import jakarta.data.Delete;"));
@@ -123,7 +123,7 @@ public class ST4RepoGenTest {
         genRepo.add("repo", repo);
         String classSrc = genRepo.render();
         System.out.println(classSrc);
-        Assertions.assertTrue(classSrc.contains("public interface BookRepository$"));
+        Assertions.assertTrue(classSrc.contains("interface BookRepository$"));
         Assertions.assertTrue(!classSrc.contains("// TODO; Implement TCK overrides"));
         Assertions.assertTrue(classSrc.contains("void deleteAllBy();"));
         Assertions.assertTrue(classSrc.contains("import jakarta.data.Delete;"));
