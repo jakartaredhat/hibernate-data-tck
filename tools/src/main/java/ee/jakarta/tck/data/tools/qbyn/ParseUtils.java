@@ -165,10 +165,10 @@ public class ParseUtils {
             case FIND:
                 break;
             case DELETE:
-                sb.append("delete ").append(info.getEntity()).append(' ');
+                sb.append("delete ").append(info.getSimpleName()).append(' ');
                 break;
             case UPDATE:
-                sb.append("update ").append(info.getEntity()).append(' ');
+                sb.append("update ").append(info.getSimpleName()).append(' ');
                 break;
             case COUNT:
                 if(optionsSet.contains(ToQueryOptions.CAST_COUNT_TO_INTEGER)) {
