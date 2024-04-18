@@ -237,7 +237,7 @@
                         <maven.repo.local>${settings.localRepository}</maven.repo.local>
                         <jboss.home>${jboss.home}</jboss.home>
                         <arquillian.launch>wildfly-core-profile</arquillian.launch>
-                        <jakarta.tck.standalone>false</jakarta.tck.standalone>
+                        <jakarta.tck.skip.deployment>false</jakarta.tck.skip.deployment>
                         <!-- This property propagates to the javaVmArguments in arquillian.xml -->
                         <additional.vm.args>
                         </additional.vm.args>
