@@ -149,6 +149,7 @@
                         <!-- tag::logging[] -->
                         <java.util.logging.config.file>target/test-classes/logging.properties</java.util.logging.config.file>
                         <!-- end::logging[] -->
+                        <jakarta.tck.skip.deployment>true</jakarta.tck.skip.deployment>
                     </systemPropertyVariables>
                     <!-- end::systemProperties[] -->
                     <groups><![CDATA[standalone & persistence]]></groups>
