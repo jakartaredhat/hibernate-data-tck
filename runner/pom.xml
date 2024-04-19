@@ -35,7 +35,7 @@
         <junit.version>5.9.0</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
-        <sigtest.version>2.2</sigtest.version>
+        <sigtest.version>2.3</sigtest.version>
         <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
         <h2.version>2.1.214</h2.version>
@@ -69,6 +69,12 @@
             <artifactId>hibernate-data-tck-tests</artifactId>
             <version>1.0</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.arquillian.protocol</groupId>
+                    <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- The API -->
@@ -98,14 +104,6 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
-        <!-- Signature Test Plugin -->
-        <dependency>
-            <groupId>jakarta.tck</groupId>
-            <artifactId>sigtest-maven-plugin</artifactId>
-            <version>2.3</version>
-        </dependency>
-        <!-- APIs referenced by TCK that do not require implementations for standalone
-         tests -->
         <dependency>
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
@@ -115,35 +113,16 @@
             <artifactId>arquillian-junit5-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>6.1.0-M2</version>
+            <groupId>jakarta.tck</groupId>
+            <artifactId>sigtest-maven-plugin</artifactId>
+            <version>${sigtest.version}</version>
         </dependency>
-        <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>4.1.0.RC1</version>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.validation</groupId>
-            <artifactId>jakarta.validation-api</artifactId>
-            <version>3.1.0-M2</version>
-        </dependency>
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>${h2.version}</version>
         </dependency>
-        <!--dependency>
-        <groupId>com.mysql</groupId>
-        <artifactId>mysql-connector-j</artifactId>
-        <version>8.0.33</version>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.7.1</version>
-        </dependency-->
     </dependencies>
 
     <build>
@@ -156,34 +135,6 @@
                     <release>17</release>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
-                <executions>
-                    <execution>
-                        <id>copy</id>
-                        <phase>process-sources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <artifactItems>
-                        <artifactItem>
-                            <groupId>jakarta.data</groupId>
-                            <artifactId>jakarta.data-api</artifactId>
-                            <version>${jakarta.data.version}</version>
-                            <type>jar</type>
-                            <overWrite>false</overWrite>
-                            <outputDirectory>target</outputDirectory>
-                            <destFileName>jakarta.data-api.jar</destFileName>
-                        </artifactItem>
-                    </artifactItems>
-                    <overWriteSnapshots>true</overWriteSnapshots>
-                </configuration>
-            </plugin>
             <!-- Surefire plugin - Entrypoint for Junit5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -192,22 +143,15 @@
                 <configuration>
                     <!-- tag::systemProperties[] -->
                     <systemPropertyVariables>
-                        <!-- tag::signature[] -->
-                        <jakarta.tck.profile>none</jakarta.tck.profile>
+                        <jakarta.tck.skip.deployment>true</jakarta.tck.skip.deployment>
                         <jimage.dir>target/tck-classes</jimage.dir>
                         <signature.sigTestClasspath>${project.build.directory}/jakarta.data-api.jar</signature.sigTestClasspath>
-                        <!-- end::signature[] -->
                         <!-- tag::logging[] -->
                         <java.util.logging.config.file>target/test-classes/logging.properties</java.util.logging.config.file>
                         <!-- end::logging[] -->
                     </systemPropertyVariables>
                     <!-- end::systemProperties[] -->
-                    <!-- Supported tags
-                        Entities:[nosql|persistence]
-                        Other:   [signature] -->
                     <groups><![CDATA[standalone & persistence]]></groups>
-                    <!-- If running back-to-back tests at different levels
-                     use this to distinguish the results -->
                     <reportNameSuffix>standalone</reportNameSuffix>
                     <properties>
                         <configurationParameters>
