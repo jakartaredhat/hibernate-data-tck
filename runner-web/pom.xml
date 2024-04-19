@@ -29,13 +29,13 @@
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
         <arquillian.version>1.8.0.Final</arquillian.version>
-        <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
-        <jakarta.data.tck.version>1.0.0-SNAPSHOT</jakarta.data.tck.version>
+        <jakarta.data.version>1.0.0-RC1</jakarta.data.version>
+        <jakarta.data.tck.version>1.0.0-RC1</jakarta.data.tck.version>
         <junit.version>5.10.2</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
         <sigtest.version>2.3</sigtest.version>
-        <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
+        <hibernate.data.version>6.6.0.Alpha1</hibernate.data.version>
         <weld.version>5.1.2.Final</weld.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
         <h2.version>2.1.214</h2.version>
