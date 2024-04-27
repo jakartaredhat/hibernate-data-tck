@@ -10,12 +10,12 @@ This is a work in progress that probably contains extraneous code and dependenci
 ### Java SE
 The Java SE version in use needs to be 17 or higher.
 
-### Hibernate 6.6.0-SNAPSHOT of hibernate-core and hibernate-jpamodelgen
+### Hibernate 6.6.0.Alpha1 of hibernate-core and hibernate-jpamodelgen
 1. git clone	https://github.com/gavinking/hibernate-orm.git
 1. cd hibernate-orm
 1. ./gradlew :hibernate-core:publishToMavenLocal :hibernate-jpamodelgen:publishToMavenLocal
 
-### Jakarta Data API and TCK 1.0.0-SNAPSHOT
+### Jakarta Data API and TCK 1.0.0-RC1
 1. git clone https://github.com/jakartaee/data.git
 1. cd data
 1. mvn install

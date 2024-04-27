@@ -30,13 +30,13 @@
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
         <arquillian.version>1.8.0.Final</arquillian.version>
-        <jakarta.data.version>1.0.0-SNAPSHOT</jakarta.data.version>
-        <jakarta.data.tck.version>1.0.0-SNAPSHOT</jakarta.data.tck.version>
+        <jakarta.data.version>1.0.0-RC1</jakarta.data.version>
+        <jakarta.data.tck.version>1.0.0-RC1</jakarta.data.tck.version>
         <jakarta.transaction.version>2.0.1</jakarta.transaction.version>
         <junit.version>5.9.0</junit.version>
         <cdi.version>4.1.0-M2</cdi.version>
         <servlet.version>6.0.0-M2</servlet.version>
-        <hibernate.data.version>6.6.0-SNAPSHOT</hibernate.data.version>
+        <hibernate.data.version>6.6.0.Alpha1</hibernate.data.version>
     </properties>
 
     <!-- The Junit5 test frameworks -->
