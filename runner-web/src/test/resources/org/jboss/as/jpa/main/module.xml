@@ -14,7 +14,7 @@
     </exports>
 
     <resources>
-        <resource-root path="wildfly-jpa-31.0.1.Final.jar"/>
+        <resource-root path="wildfly-jpa-32.0.0.Final.jar"/>
     </resources>
 
     <dependencies>

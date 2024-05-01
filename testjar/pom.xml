@@ -30,12 +30,12 @@
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
         <arquillian.version>1.8.0.Final</arquillian.version>
-        <jakarta.data.version>1.0.0-RC1</jakarta.data.version>
-        <jakarta.data.tck.version>1.0.0-RC1</jakarta.data.tck.version>
+        <jakarta.data.version>1.0.0</jakarta.data.version>
+        <jakarta.data.tck.version>1.0.0</jakarta.data.tck.version>
         <jakarta.transaction.version>2.0.1</jakarta.transaction.version>
         <junit.version>5.9.0</junit.version>
-        <cdi.version>4.1.0-M2</cdi.version>
-        <servlet.version>6.0.0-M2</servlet.version>
+        <cdi.version>4.1.0</cdi.version>
+        <servlet.version>6.0.0</servlet.version>
         <hibernate.data.version>6.6.0.Alpha1</hibernate.data.version>
     </properties>
 
@@ -233,4 +233,39 @@
         </plugins>
     </build>
 
+    <profiles>
+        <!-- This profile enables consuming artifacts from the Jakarta staging repository -->
+        <profile>
+            <id>staging</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <repositories>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <name>Sonatype Nexus Staging</name>
+                    <url>https://jakarta.oss.sonatype.org/content/repositories/staging/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </repository>
+            </repositories>
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>sonatype-nexus-staging</id>
+                    <name>Sonatype Nexus Staging</name>
+                    <url>https://jakarta.oss.sonatype.org/content/repositories/staging/</url>
+                    <releases>
+                        <enabled>true</enabled>
+                    </releases>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                </pluginRepository>
+            </pluginRepositories>
+        </profile>
+    </profiles>
 </project>
