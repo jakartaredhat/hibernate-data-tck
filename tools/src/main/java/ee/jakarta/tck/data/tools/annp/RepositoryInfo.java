@@ -25,8 +25,14 @@ import javax.lang.model.util.Types;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * A class to hold information about a repository interface
+ */
 public class RepositoryInfo {
+
+    /**
+     * A class to hold information about a repository QBN method
+     */
     public static class MethodInfo {
         String name;
         String returnType;
@@ -80,6 +86,7 @@ public class RepositoryInfo {
     private String pkg;
     private String name;
     private String dataStore = "";
+    private ProcessorLogger log = ProcessorLogger.getInstance();
     private ArrayList<MethodInfo> methods = new ArrayList<>();
     public ArrayList<ExecutableElement> qbnMethods = new ArrayList<>();
 
@@ -147,8 +154,8 @@ public class RepositoryInfo {
             returnType = (DeclaredType) m.getReturnType();
         }
         String returnTypeStr = returnType == null ? m.getReturnType().toString() : toString(returnType);
-        System.out.printf("addQBNMethod: %s, returnType: %s, returnTypeStr: %s\n",
-                m.getSimpleName().toString(), returnType, returnTypeStr);
+        log.debug(String.format("addQBNMethod: %s, returnType: %s, returnTypeStr: %s\n",
+                m.getSimpleName().toString(), returnType, returnTypeStr));
         ParseUtils.ToQueryOptions options = ParseUtils.ToQueryOptions.NONE;
         String methodName = m.getSimpleName().toString();
         // Select the appropriate cast option if this is a countBy method

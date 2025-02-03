@@ -29,14 +29,14 @@
         <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
-        <arquillian.version>1.8.0.Final</arquillian.version>
+        <arquillian.version>1.9.2.Final</arquillian.version>
         <jakarta.data.version>1.0.0</jakarta.data.version>
         <jakarta.data.tck.version>1.0.0</jakarta.data.tck.version>
         <jakarta.transaction.version>2.0.1</jakarta.transaction.version>
         <junit.version>5.9.0</junit.version>
         <cdi.version>4.1.0</cdi.version>
         <servlet.version>6.0.0</servlet.version>
-        <hibernate.data.version>6.6.0.Alpha1</hibernate.data.version>
+        <hibernate.data.version>6.6.6.Final</hibernate.data.version>
     </properties>
 
     <!-- The Junit5 test frameworks -->
@@ -53,6 +53,13 @@
                 <groupId>org.jboss.arquillian</groupId>
                 <artifactId>arquillian-bom</artifactId>
                 <version>${arquillian.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-bom</artifactId>
+                <version>2.0.0-beta-2</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

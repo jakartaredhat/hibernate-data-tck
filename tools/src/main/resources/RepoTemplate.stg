@@ -14,7 +14,7 @@ import #repo.fqn#;
 #tckImports()#
 
 @Repository(dataStore = "#repo.dataStore#")
-@Generated("ee.jakarta.tck.data.tools.annp.RespositoryProcessor")
+@Generated("ee.jakarta.tck.data.tools.annp.RepositoryProcessor")
 interface #repo.name#$ extends #repo.name# {
     #repo.methods :{m |
         @Override

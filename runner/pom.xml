@@ -29,11 +29,11 @@
         <maven.comp.plugin.version>3.10.1</maven.comp.plugin.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
 
-        <arquillian.version>1.8.0.Final</arquillian.version>
+        <arquillian.version>1.9.2.Final</arquillian.version>
         <jakarta.data.version>1.0.0</jakarta.data.version>
         <junit.version>5.9.0</junit.version>
         <sigtest.version>2.3</sigtest.version>
-        <hibernate.data.version>6.6.0.Alpha1</hibernate.data.version>
+        <hibernate.data.version>6.6.6.Final</hibernate.data.version>
         <weld-junit.version>4.0.2.Final</weld-junit.version>
         <h2.version>2.1.214</h2.version>
     </properties>
@@ -55,6 +55,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-bom</artifactId>
+                <version>2.0.0-beta-2</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -65,13 +72,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-data-tck-tests</artifactId>
             <version>1.0</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.jboss.arquillian.protocol</groupId>
-                    <artifactId>arquillian-protocol-servlet-jakarta</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- The API -->

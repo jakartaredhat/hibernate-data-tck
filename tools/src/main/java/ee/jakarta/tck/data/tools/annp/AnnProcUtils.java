@@ -38,7 +38,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Utility methods for the annotation processor
+ */
 public class AnnProcUtils {
+    private static final ProcessorLogger log = ProcessorLogger.getInstance();
+
     // The name of the template for the TCK override imports
     public static final String TCK_IMPORTS = "/tckImports";
     // The name of the template for the TCK overrides
@@ -50,14 +55,12 @@ public class AnnProcUtils {
      * @return a list of non-lifecycle methods as candidate repository methods
      */
     public static List<ExecutableElement> methodsIn(TypeElement typeElement) {
-        ArrayList<ExecutableElement> methods = new ArrayList<>();
         List<ExecutableElement> typeMethods = methodsIn(typeElement.getEnclosedElements());
-        methods.addAll(typeMethods);
+        ArrayList<ExecutableElement> methods = new ArrayList<>(typeMethods);
         List<? extends TypeMirror> superifaces = typeElement.getInterfaces();
         for (TypeMirror iface : superifaces) {
-            if(iface instanceof DeclaredType) {
-                DeclaredType dt = (DeclaredType) iface;
-                System.out.printf("Processing superinterface %s<%s>\n", dt.asElement(), dt.getTypeArguments());
+            if(iface instanceof DeclaredType dt) {
+                log.debug(String.format("Processing superinterface %s<%s>\n", dt.asElement(), dt.getTypeArguments()));
                 methods.addAll(methodsIn((TypeElement) dt.asElement()));
             }
         }
@@ -99,8 +102,8 @@ public class AnnProcUtils {
     }
 
     public static String getFullyQualifiedName(Element element) {
-        if (element instanceof TypeElement) {
-            return ((TypeElement) element).getQualifiedName().toString();
+        if (element instanceof TypeElement te) {
+            return te.getQualifiedName().toString();
         }
         return null;
     }
@@ -112,7 +115,7 @@ public class AnnProcUtils {
             return ParseUtils.parseQueryByName(methodName);
         }
         catch (Throwable e) {
-            System.out.printf("Failed to parse %s: %s\n", methodName, e.getMessage());
+            log.debug(String.format("Failed to parse %s: %s\n", methodName, e.getMessage()));
         }
         return null;
     }
@@ -129,19 +132,24 @@ public class AnnProcUtils {
         STGroup repoGroup = new STGroupFile("RepoTemplate.stg");
         ST genRepo = repoGroup.getInstanceOf("genRepo");
         try {
-            URL stgURL = AnnProcUtils.class.getResource("/"+repo.getFqn()+".stg");
+            String repoTemplate = repo.getFqn() + ".stg";
+            URL stgURL = AnnProcUtils.class.getResource(repoTemplate);
+            if(stgURL == null) {
+                log.warn(String.format("No template found for %s\n", repo.getFqn()));
+            }
+
             STGroup tckGroup = new STGroupFile(stgURL);
             long count = tckGroup.getTemplateNames().stream().filter(t -> t.equals(TCK_IMPORTS) | t.equals(TCK_OVERRIDES)).count();
             if(count != 2) {
-                System.out.printf("No TCK overrides for %s\n", repo.getFqn());
+                log.debug(String.format("No TCK overrides for %s\n", repo.getFqn()));
             } else {
                 tckGroup.importTemplates(repoGroup);
-                System.out.printf("Found TCK overrides(%s) for %s\n", tckGroup.getRootDirURL(), repo.getFqn());
-                System.out.printf("tckGroup: %s\n", tckGroup.show());
+                log.debug(String.format("Found TCK overrides(%s) for %s\n", tckGroup.getRootDirURL(), repo.getFqn()));
+                log.debug(String.format("tckGroup: %s\n", tckGroup.show()));
                 genRepo = tckGroup.getInstanceOf("genRepo");
             }
         } catch (IllegalArgumentException e) {
-            System.out.printf("No TCK overrides for %s\n", repo.getFqn());
+            log.debug(String.format("No TCK overrides for %s\n", repo.getFqn()));
         }
 
         genRepo.add("repo", repo);
@@ -154,6 +162,6 @@ public class AnnProcUtils {
             writer.write(ifaceSrc);
             writer.flush();
         }
-        System.out.printf("Wrote %s, to: %s\n", ifaceName, srcFile.toUri());
+        log.debug(String.format("Wrote %s, to: %s\n", ifaceName, srcFile.toUri()));
     }
 }

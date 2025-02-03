@@ -17,7 +17,7 @@ import org.antlr.v4.runtime.CodePointCharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
-
+// These need to be generated, run mvn generate-sources
 import ee.jakarta.tck.data.tools.antlr.QBNLexer;
 import ee.jakarta.tck.data.tools.antlr.QBNParser;
 import ee.jakarta.tck.data.tools.antlr.QBNBaseListener;
